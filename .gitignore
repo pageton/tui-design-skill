@@ -1,0 +1,12 @@
+# Build artifacts
+target/
+
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
