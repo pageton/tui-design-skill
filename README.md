@@ -18,7 +18,7 @@ Clone or download this repo, then install into your tool(s) of choice.
 
 ```bash
 # Clone the skill
-git clone <repo-url> ~/Projects/tui-design-skill
+git clone https://github.com/pageton/tui-design-skill ~/Projects/tui-design-skill
 
 # Install for OpenCode
 cp -r ~/Projects/tui-design-skill/references ~/.config/opencode/skills/tui-design/
