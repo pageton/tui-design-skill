@@ -102,6 +102,7 @@ unzip skill.zip -d ~/Projects/tui-design-skill
 ```
 tui-design-skill/
 ├── SKILL.md                          # Main skill definition
+├── AGENTS.md                         # Editing constraints for AI coding agents
 ├── commands/                         # Tool-specific command files
 │   ├── claude-code-tui-design.md     # Claude Code slash command
 │   └── opencode-tui-design.md        # OpenCode slash command
@@ -125,7 +126,8 @@ tui-design-skill/
 │   ├── log-viewer.md
 │   └── file-explorer.md
 ├── scripts/
-│   └── check-mockups.py              # ASCII mockup alignment checker (just check-mockups)
+│   └── check-mockups.py              # ASCII mockup alignment checker
+├── justfile                          # Validation pipeline (just check-all)
 └── templates/                        # Runnable starter apps
     ├── bubbletea-starter/main.go
     ├── textual-starter/app.py
@@ -134,8 +136,27 @@ tui-design-skill/
     │   └── src/main.rs
     └── ink-starter/
         ├── package.json
+        ├── package-lock.json
         ├── tsconfig.json
         └── src/main.tsx
+```
+
+## Development
+
+No build step — the repo is Markdown plus starter templates, validated with [just](https://github.com/casey/just):
+
+```bash
+just check-all      # markdownlint + mockup widths + template compile checks
+just check-mockups  # ASCII mockup alignment only
+```
+
+`check-all` enforces the repo's own quality rules: every ASCII mockup must render at a fixed width (a misaligned mockup is worse than no mockup — see `AGENTS.md`), markdown must lint clean, and the Bubble Tea, Ratatui, and Textual templates must compile. Each starter also runs directly:
+
+```bash
+cd templates/bubbletea-starter && go run main.go
+cd templates/textual-starter   && textual run app.py --dev
+cd templates/ratatui-starter   && cargo run
+cd templates/ink-starter       && npm install && npm start
 ```
 
 ## Example Prompts
