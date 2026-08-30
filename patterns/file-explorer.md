@@ -14,11 +14,11 @@ A terminal file browser for navigating, inspecting, and acting on files and dire
 
 ## Layout
 
-```
+````
 +──────────────────────────────────────────────────────────────────────+
 │  ~/Projects/myapp                                 23 items           │
 ├──────────────────────────────────────────────────────────────────────┤
-│  /: filter  n: new  d: delete  y: copy  r: rename                  │
+│  /: filter  n: new  d: delete  y: copy  r: rename                    │
 ├──────────────────────────────────┬───────────────────────────────────┤
 │  Files                           │  README.md                        │
 │                                  │                                   │
@@ -41,9 +41,9 @@ A terminal file browser for navigating, inspecting, and acting on files and dire
 │                                  │                                   │
 │                                  │  ...                              │
 ├──────────────────────────────────┴───────────────────────────────────┤
-│ ● ~/Projects/myapp │ 23 items │ j/k: nav  Enter: open  h/l: collapse│
+│ ● ~/Projects/myapp │ 23 items │ j/k: nav  Enter: open  h/l: collapse │
 +──────────────────────────────────────────────────────────────────────+
-```
+````
 
 ---
 
@@ -113,10 +113,10 @@ Use icons or prefixes to distinguish file types:
 ```
 ┌──────────────────────────────────────────────────────────┐
 │                                                          │
-│              This directory is empty                      │
+│                 This directory is empty                  │
 │                                                          │
-│    Press `n` to create a new file,                      │
-│    or `h` to go to the parent directory.                │
+│    Press `n` to create a new file,                       │
+│    or `h` to go to the parent directory.                 │
 │                                                          │
 └──────────────────────────────────────────────────────────┘
 ```

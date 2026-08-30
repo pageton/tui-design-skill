@@ -15,26 +15,28 @@ A dashboard presents multiple data panels in a grid layout, providing an overvie
 ## Layout
 
 ```
-+─────────────────────────────────────────────────────────────────────+
-│  Dashboard                                            j/k: nav  q: quit│
-├──────────┬──────────┬──────────┬──────────────────────────────────────┤
-│          │          │          │                                      │
+┌──────────────────────────────────────────────────────────────────────┐
+│  Dashboard                                         j/k: nav  q: quit │
+├──────────┬──────────┬──────────┬─────────────────────────────────────┤
+│          │          │          │                                     │
 │  Total   │  Active  │  Errors  │  Recent Activity                    │
-│  1,247   │  892     │  3       │                                      │
-│  ▲ 12%   │  ▲ 5%    │  ▼ 2     │  ● Record #1247 created 2m ago     │
+│  1,247   │  892     │  3       │                                     │
+│  ▲ 12%   │  ▲ 5%    │  ▼ 2     │  ● Record #1247 created 2m ago      │
 │          │          │          │  ● Record #1246 updated 5m ago      │
-├──────────┴──────────┴──────────│  ● Record #1245 deleted 8m ago     │
-│                                │  ● Record #1244 synced 12m ago     │
-│  Performance                   │  ● Record #1243 created 1h ago     │
-│                                │                                      │
-│  ████████████░░░░ CPU 68%      ├──────────────────────────────────────┤
-│  ██████░░░░░░░░░░░░ Mem 37%    │  Quick Actions                      │
-│  ██████████████░░░░ Disk 82%   │                                      │
-│                                │  [n] New Record  [r] Refresh         │
+├──────────┴──────────┴──────────┤  ● Record #1245 deleted 8m ago      │
+│  Performance                   │  ● Record #1244 synced 12m ago      │
+│                                │  ● Record #1243 created 1h ago      │
+│  ████████████░░░░ CPU 68%      │                                     │
+│  ██████░░░░░░░░░░ Mem 37%      │                                     │
+│  ██████████████░░░░ Disk 82%   │                                     │
+│                                ├─────────────────────────────────────┤
+│                                │  Quick Actions                      │
+│                                │                                     │
+│                                │  [n] New Record  [r] Refresh        │
 │                                │  [/] Search      [s] Settings       │
-└────────────────────────────────┴──────────────────────────────────────┘
-│ ● Connected  Last sync: 3s ago        j/k: navigate  Enter: select  │
-+──────────────────────────────────────────────────────────────────────+
+├────────────────────────────────┴─────────────────────────────────────┘
+│ ● Connected  Last sync: 3s ago      j/k: navigate  Enter: select  ?  │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
 ---

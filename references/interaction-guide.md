@@ -123,7 +123,7 @@ Focus model: Tab switches views, j/k navigates within the active view.
 Best for: Many sections, some with sub-sections.
 
 ```
-+ Projects ───────+──────────────────────+
++ Projects ────────+──────────────────────+
 │ > Dashboard      │                      │
 │   Records        │   [Content Area]     │
 │   Logs           │                      │

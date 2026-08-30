@@ -16,21 +16,21 @@ A real-time, filterable log viewer for streaming, searching, and inspecting log 
 
 ```
 +──────────────────────────────────────────────────────────────────────+
-│  Logs — production                             ⠋ Streaming          │
+│  Logs — production                             ⠋ Streaming           │
 ├──────────────────────────────────────────────────────────────────────┤
-│  /: search  [All] [Error] [Warn] [Info]  f: follow  c: clear        │
+│  /: search  [All] [Error] [Warn] [Info]  f: follow  c: clear         │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │  10:42:31.204  INFO   server.start        Listening on :8080         │
 │  10:42:31.205  INFO   db.connect          Connected to postgres      │
 │  10:42:31.512  INFO   server.request      GET /api/records 200 12ms  │
-│  10:42:31.890  WARN   cache.miss          Cache miss for key: user42│
-│  10:42:32.001  INFO   server.request      GET /api/users 200 45ms   │
+│  10:42:31.890  WARN   cache.miss          Cache miss for key: user42 │
+│  10:42:32.001  INFO   server.request      GET /api/users 200 45ms    │
 ▸│  10:42:32.114  ERROR  db.query            Timeout after 30s         │
-│  10:42:32.115  ERROR  server.request      GET /api/records 500 30s  │
-│  10:42:32.340  INFO   server.request      GET /health 200 2ms       │
-│  10:42:33.001  INFO   cache.refresh       Refreshed 42 entries      │
-│  10:42:33.210  INFO   server.request      POST /api/records 201 8ms │
+│  10:42:32.115  ERROR  server.request      GET /api/records 500 30s   │
+│  10:42:32.340  INFO   server.request      GET /health 200 2ms        │
+│  10:42:33.001  INFO   cache.refresh       Refreshed 42 entries       │
+│  10:42:33.210  INFO   server.request      POST /api/records 201 8ms  │
 │                                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
 │  10:42:32 ERROR  db.query — Timeout after 30s                        │
@@ -39,9 +39,9 @@ A real-time, filterable log viewer for streaming, searching, and inspecting log 
 │  params: ["active"]                                                  │
 │  error: connection timeout: context deadline exceeded                │
 │                                                                      │
-│  [c] Copy  [Esc] Close                                              │
+│  [c] Copy  [Esc] Close                                               │
 ├──────────────────────────────────────────────────────────────────────┤
-│ ● Streaming │ 10,247 entries │ Showing errors │ ↑ newest  /: search │
+│ ● Streaming │ 10,247 entries │ Showing errors │ ↑ newest  /: search  │
 +──────────────────────────────────────────────────────────────────────+
 ```
 

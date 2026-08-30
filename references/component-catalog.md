@@ -117,7 +117,7 @@ or with sections:
 ### Visual Pattern
 
 ```
-                ┌─────────────────────────────────┐
+                ┌──────────────────────────────────┐
                 │  Delete Record                   │
                 │                                  │
                 │  Are you sure you want to delete │
@@ -125,7 +125,7 @@ or with sections:
                 │  undone.                         │
                 │                                  │
                 │       [Cancel]   [Delete]        │
-                └─────────────────────────────────┘
+                └──────────────────────────────────┘
 ```
 
 ### Design Notes
@@ -155,17 +155,17 @@ or with sections:
 
   Name
   ┌─────────────────────────────────────────────┐
-  │ my-record-name                               │
+  │ my-record-name                              │
   └─────────────────────────────────────────────┘
 
   Type
   ┌─────────────────────────────────────────────┐
-  │ ▾ Configuration                              │
+  │ ▾ Configuration                             │
   └─────────────────────────────────────────────┘
 
   Description (optional)
   ┌─────────────────────────────────────────────┐
-  │ A brief description of this record...        │
+  │ A brief description of this record...       │
   └─────────────────────────────────────────────┘
 
   Enabled  [x]
@@ -394,7 +394,7 @@ or
 ### Visual Pattern
 
 ```
-  ┌─ Record: config.yaml ─────────────────────┐
+  ┌─ Record: config.yaml ──────────────────────┐
   │                                            │
   │  Status      modified                      │
   │  Size        2.4 KB                        │

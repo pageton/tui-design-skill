@@ -79,8 +79,9 @@ In a monospace grid, alignment is both easy and critical.
 Treat the terminal as a grid. Plan column positions:
 
 ```
-Col  0    5    10   15   20   25   30   35   40   45   50
-     |    |    |    |    |    |    |    |    |    |    |
+Col  5   10   15   20   25   30   35   40   45   50
+     |    |    |    |    |    |    |    |    |    |
+
      +----+----+--------------+---+----+----+---------+
      |         NAVIGATION     |      CONTENT          |
      +----+----+--------------+---+----+----+---------+

@@ -17,39 +17,39 @@ A multi-field form for data entry, editing, and configuration. Designed for keyb
 
 ```
 +──────────────────────────────────────────────────────────────────────+
-│  ← Back to Records                          Create New Record       │
+│  ← Back to Records                          Create New Record        │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  Name *                                                             │
+│  Name *                                                              │
 │  ┌────────────────────────────────────────────────────────────────┐  │
 │  │ my-record-name                                                 │  │
 │  └────────────────────────────────────────────────────────────────┘  │
 │                                                                      │
-│  Type                                                               │
+│  Type                                                                │
 │  ┌────────────────────────────────────────────────────────────────┐  │
 │  │ ▾ Configuration                                                │  │
 │  └────────────────────────────────────────────────────────────────┘  │
 │                                                                      │
-│  Description                                                        │
+│  Description                                                         │
 │  ┌────────────────────────────────────────────────────────────────┐  │
 │  │ A brief description of this record and its purpose...          │  │
 │  │                                                                │  │
 │  └────────────────────────────────────────────────────────────────┘  │
 │                                                                      │
-│  Priority                                                           │
-│  ○ Low    ● Medium    ○ High    ○ Critical                          │
+│  Priority                                                            │
+│  ○ Low    ● Medium    ○ High    ○ Critical                           │
 │                                                                      │
-│  Tags (comma-separated)                                             │
+│  Tags (comma-separated)                                              │
 │  ┌────────────────────────────────────────────────────────────────┐  │
 │  │ config, production                                             │  │
 │  └────────────────────────────────────────────────────────────────┘  │
 │                                                                      │
-│  Enabled  [x]                                                       │
+│  Enabled  [x]                                                        │
 │                                                                      │
-│                          [Esc: Cancel]    [Ctrl+S: Save]            │
+│                          [Esc: Cancel]    [Ctrl+S: Save]             │
 │                                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
-│  Tab: next field  Shift+Tab: prev field  Ctrl+S: save  Esc: cancel │
+│  Tab: next field  Shift+Tab: prev field  Ctrl+S: save  Esc: cancel   │
 +──────────────────────────────────────────────────────────────────────+
 ```
 
@@ -123,9 +123,10 @@ A multi-field form for data entry, editing, and configuration. Designed for keyb
 
 ```
   Email
-  ┌────────────────────────────────────────────────────────────────┐
-  │ not-an-email                                                    │  └───┘
-  Please enter a valid email address
+  ┌──────────────────────────────────────────────────────────────┐
+  │ not-an-email                                                 │
+  └──────────────────────────────────────────────────────────────┘
+  ✗ Please enter a valid email address
 ```
 
 - Focus jumps to first error field
@@ -146,7 +147,7 @@ A multi-field form for data entry, editing, and configuration. Designed for keyb
   │                                       │
   │  You have unsaved changes.            │
   │                                       │
-  │  [d] Discard  [c] Continue editing   │
+  │  [d] Discard  [c] Continue editing    │
   └───────────────────────────────────────┘
 ```
 

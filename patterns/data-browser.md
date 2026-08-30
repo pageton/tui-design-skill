@@ -15,32 +15,32 @@ A master-detail interface for browsing, searching, filtering, and inspecting str
 ## Layout
 
 ```
-+──────────────────────────────────────────────────────────────────────+
-│  Records                                        1,247 total          │
+┌──────────────────────────────────────────────────────────────────────┐
+│  Records                                          1,247 total        │
 ├──────────────────────────────────────────────────────────────────────┤
-│  /: filter   [All]  [Active]  [Archived]  [+ New]                   │
-├──────────────────────────────────┬───────────────────────────────────┤
-│  Name           Status   Age    │  Record: config.yaml              │
-│  ─────────────  ───────  ─────  │                                   │
-│▸ config.yaml    active   2h     │  Status      active               │
-│  README.md      active   1d     │  Size        2.4 KB               │
-│  main.go        staged   3d     │  Modified    2 hours ago          │
-│  go.mod         active   3d     │  Created     3 days ago           │
-│  Makefile       active   5d     │  Encoding    UTF-8                │
-│  .gitignore     active   5d     │  Tags        config, prod         │
-│  deploy.sh      draft    1w     │                                   │
-│  Dockerfile     active   2w     │  Content preview:                 │
-│                                 │  ┌───────────────────────────────┐│
-│                                 │  │ server:                       ││
-│                                 │  │   port: 8080                  ││
-│                                 │  │   host: 0.0.0.0               ││
-│                                 │  │   ...                         ││
-│                                 │  └───────────────────────────────┘│
-│                                 │                                   │
-│                                 │  [e] Edit  [d] Delete  [Esc] Back │
-├──────────────────────────────────┴───────────────────────────────────┤
-│ ● Connected │ Showing 8 of 1,247 │ j/k: nav  Enter: open  /: filter │
-+──────────────────────────────────────────────────────────────────────+
+│  /: filter   [All]  [Active]  [Archived]  [+ New]                    │
+├────────────────────────────────┬─────────────────────────────────────┤
+│  Name           Status   Age   │  Record: config.yaml                │
+│  ─────────────  ───────  ───── │                                     │
+│ ▸ config.yaml     active   2h  │                                     │
+│   README.md       active   1d  │                                     │
+│   main.go         staged   3d  │                                     │
+│   go.mod          active   3d  │                                     │
+│   Makefile        active   5d  │                                     │
+│   .gitignore      active   5d  │                                     │
+│  deploy.sh      draft    1w    │                                     │
+│  Dockerfile     active   2w    │  Content preview:                   │
+│                                │  ┌─────────────────────────────────┐│
+│                                │  │ server:                          │
+│                                │  │   port: 8080                     │
+│                                │  │   host: 0.0.0.0                  │
+│                                │  │   ...                            │
+│                                │  └─────────────────────────────────┘│
+│                                │                                     │
+│                                │  [e] Edit  [d] Delete  [Esc] Back   │
+├────────────────────────────────┴─────────────────────────────────────┤
+│ ● Connected │ Showing 8 of 1,247 │ j/k: nav  Enter: open  /: filter  │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -120,9 +120,9 @@ A master-detail interface for browsing, searching, filtering, and inspecting str
 ```
 ┌──────────────────────────────────────────────────────────┐
 │                                                          │
-│              No records found                             │
+│                     No records found                     │
 │                                                          │
-│    Press `n` to create your first record,               │
+│    Press `n` to create your first record,                │
 │    or `/` to search existing records.                    │
 │                                                          │
 └──────────────────────────────────────────────────────────┘

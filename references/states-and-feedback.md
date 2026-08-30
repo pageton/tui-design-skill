@@ -33,7 +33,7 @@ An empty state is not a blank screen. It is a designed experience that guides th
 │                                                 │
 │             No records found                    │
 │                                                 │
-│       Press `n` to create your first record,   │
+│       Press `n` to create your first record,    │
 │       or `/` to search existing records.        │
 │                                                 │
 │                                                 │
@@ -158,7 +158,7 @@ Show in status bar or toast. Auto-retry. Don't block the UI.
 ```
   Name
   ┌─────────────────────────────────────────────┐
-  │ record-42                                    │
+  │ record-42                                   │
   └─────────────────────────────────────────────┘
   Names cannot contain hyphens
 ```
@@ -280,7 +280,7 @@ Subtle highlight on mouse hover. Should not be the only interaction indicator �
 ```
   Name
   ┌────────────────────────────────────────┐
-  │ my-record█                              │
+  │ my-record█                             │
   └────────────────────────────────────────┘
 ```
 

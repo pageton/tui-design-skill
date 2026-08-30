@@ -217,8 +217,8 @@ When showing layouts, use ASCII art that accurately represents the terminal outp
 |                  |  +----------------------------------+  |
 |                  |                                        |
 +------------------+----------------------------------------+
-| j/k: navigate  Enter: select  /: search  q: quit             |
-+---------------------------------------------------------------+
+| j/k: navigate  Enter: select  /: search  q: quit          |
++-----------------------------------------------------------+
 ```
 
 ### Design Recommendations
