@@ -21,13 +21,23 @@ Clone or download this repo, then install into your tool(s) of choice.
 git clone https://github.com/pageton/tui-design-skill ~/Projects/tui-design-skill
 
 # Install for OpenCode
+mkdir -p ~/.config/opencode/skills/tui-design
 cp -r ~/Projects/tui-design-skill/references ~/.config/opencode/skills/tui-design/
 cp -r ~/Projects/tui-design-skill/frameworks ~/.config/opencode/skills/tui-design/
 cp -r ~/Projects/tui-design-skill/patterns ~/.config/opencode/skills/tui-design/
 cp -r ~/Projects/tui-design-skill/templates ~/.config/opencode/skills/tui-design/
 cp ~/Projects/tui-design-skill/SKILL.md ~/.config/opencode/skills/tui-design/SKILL.md
+mkdir -p ~/.config/opencode/commands
+cp ~/Projects/tui-design-skill/commands/opencode-tui-design.md ~/.config/opencode/commands/tui-design.md
 
 # Install for Claude Code
+mkdir -p ~/.claude/skills/tui-design
+cp -r ~/Projects/tui-design-skill/references ~/.claude/skills/tui-design/
+cp -r ~/Projects/tui-design-skill/frameworks ~/.claude/skills/tui-design/
+cp -r ~/Projects/tui-design-skill/patterns ~/.claude/skills/tui-design/
+cp -r ~/Projects/tui-design-skill/templates ~/.claude/skills/tui-design/
+cp ~/Projects/tui-design-skill/SKILL.md ~/.claude/skills/tui-design/SKILL.md
+mkdir -p ~/.claude/commands
 cp ~/Projects/tui-design-skill/commands/claude-code-tui-design.md ~/.claude/commands/tui-design.md
 ```
 
@@ -56,7 +66,15 @@ cp ~/Projects/tui-design-skill/commands/claude-code-tui-design.md ~/.claude/comm
 
 ### Claude Code
 
-1. Copy the command file:
+1. Copy the skill pack so the command can load the reference files:
+
+   ```bash
+   mkdir -p ~/.claude/skills/tui-design
+   cp -r ~/Projects/tui-design-skill/{SKILL.md,references,frameworks,patterns,templates} \
+       ~/.claude/skills/tui-design/
+   ```
+
+2. Copy the command file:
 
    ```bash
    mkdir -p ~/.claude/commands
@@ -64,7 +82,7 @@ cp ~/Projects/tui-design-skill/commands/claude-code-tui-design.md ~/.claude/comm
        ~/.claude/commands/tui-design.md
    ```
 
-2. Invoke with:
+3. Invoke with:
 
    ```
    /tui-design Build me a dashboard for monitoring server health
@@ -106,6 +124,8 @@ tui-design-skill/
 │   ├── form-workflow.md
 │   ├── log-viewer.md
 │   └── file-explorer.md
+├── scripts/
+│   └── check-mockups.py              # ASCII mockup alignment checker (just check-mockups)
 └── templates/                        # Runnable starter apps
     ├── bubbletea-starter/main.go
     ├── textual-starter/app.py

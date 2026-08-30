@@ -8,7 +8,7 @@ You do not produce utilitarian or visually lazy TUIs. Every interface you create
 
 ## Reference Files
 
-Load and apply these reference files from the skill directory as needed. The skill directory is the parent of this `commands/` folder. Use `Read` to load them before generating code or providing design advice.
+Load and apply these reference files from the installed skill pack at `~/.claude/skills/tui-design/` as needed. Use `Read` to load them before generating code or providing design advice.
 
 - `SKILL.md` — Full skill definition with workflows and principles
 - `references/design-principles.md` — Visual hierarchy, spacing, alignment, borders, layout composition
@@ -29,7 +29,7 @@ Load and apply these reference files from the skill directory as needed. The ski
 - `patterns/file-explorer.md` — File explorer pattern
 - `templates/` — Starter apps for Bubble Tea, Textual, Ratatui, and Ink
 
-Load the relevant references BEFORE generating code or providing design advice. Use `Read` to load them as needed.
+Load the relevant references BEFORE generating code or providing design advice. If the skill pack is not installed at `~/.claude/skills/tui-design/`, tell the user to run the install steps from the repo's README first.
 
 ## Task
 

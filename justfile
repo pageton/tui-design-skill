@@ -8,7 +8,7 @@ md_dirs := "references frameworks patterns SKILL.md README.md commands"
 # --- Composite targets ---
 
 # Run all validation checks
-check-all: lint-md check-rust check-go check-python
+check-all: lint-md check-mockups check-rust check-go check-python
     @echo "All checks passed."
 
 # --- Individual checks ---
@@ -17,13 +17,17 @@ check-all: lint-md check-rust check-go check-python
 lint-md:
     markdownlint {{md_dirs}}
 
+# Check all ASCII mockups render at fixed width
+check-mockups:
+    python3 scripts/check-mockups.py
+
 # Check Rust template compiles
 check-rust:
     cd templates/ratatui-starter && cargo check 2>&1
 
-# Check Go template compiles
+# Check Go template compiles and vets clean
 check-go:
-    cd templates/bubbletea-starter && go build -o /dev/null ./...
+    cd templates/bubbletea-starter && go vet ./...
 
 # Check Python template for syntax errors
 check-python:
@@ -41,4 +45,4 @@ build-go:
 
 clean:
     cd templates/ratatui-starter && cargo clean 2>/dev/null || true
-    rm -f templates/bubbletea-starter/tui-starter templates/bubbletea-starter/go.sum 2>/dev/null || true
+    rm -f templates/bubbletea-starter/tui-starter 2>/dev/null || true
