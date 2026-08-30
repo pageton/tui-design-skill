@@ -7,9 +7,7 @@ const c = {
   base: '252',
   muted: '243',
   accent: '86',
-  error: '203',
   success: '78',
-  warning: '221',
 };
 
 // --- Data ---
@@ -22,6 +20,13 @@ const SCREEN_CONTENT: Record<string, string[]> = {
   Logs: ['No recent logs.', '', 'Waiting for events...'],
   Settings: ['Theme: Dark', 'Notifications: On', 'Auto-refresh: 30s'],
 };
+
+const HELP_LINES = [
+  'j/k      Navigate the sidebar',
+  'Enter    Select the highlighted item',
+  '?        Toggle this help',
+  'q        Quit',
+];
 
 // --- Components ---
 
@@ -52,9 +57,9 @@ const Sidebar: React.FC<{
 
 const Content: React.FC<{
   screen: string;
-  width: number;
-}> = ({screen, width}) => {
-  const lines = SCREEN_CONTENT[screen] ?? [];
+  showHelp: boolean;
+}> = ({screen, showHelp}) => {
+  const lines = showHelp ? HELP_LINES : SCREEN_CONTENT[screen] ?? [];
   return (
     <Box
       flexDirection="column"
@@ -65,7 +70,7 @@ const Content: React.FC<{
       paddingY={1}
     >
       <Text bold color={c.accent}>
-        {screen.toUpperCase()}
+        {(showHelp ? 'Help' : screen).toUpperCase()}
       </Text>
       <Box marginTop={1} flexDirection="column">
         {lines.map((line, i) => (
@@ -91,10 +96,15 @@ const App = () => {
   const {exit} = useApp();
   const [cursor, setCursor] = useState(0);
   const [screen, setScreen] = useState(NAV_ITEMS[0]);
+  const [showHelp, setShowHelp] = useState(false);
 
   useInput((input, key) => {
     if (input === 'q') {
       exit();
+      return;
+    }
+    if (input === '?') {
+      setShowHelp(prev => !prev);
       return;
     }
     if (input === 'j' || key.downArrow) {
@@ -105,6 +115,7 @@ const App = () => {
     }
     if (key.return) {
       setScreen(NAV_ITEMS[cursor]);
+      setShowHelp(false);
     }
   });
 
@@ -114,7 +125,7 @@ const App = () => {
     <Box flexDirection="column" height="100%">
       <Box flexDirection="row">
         <Sidebar items={NAV_ITEMS} selected={cursor} width={sidebarWidth} />
-        <Content screen={screen} width={0} />
+        <Content screen={screen} showHelp={showHelp} />
       </Box>
       <StatusBar hints="j/k: navigate  Enter: select  ?: help  q: quit" />
     </Box>

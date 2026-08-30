@@ -19,7 +19,6 @@ struct Theme {
     error: Style,
     border: Style,
     active_border: Style,
-    _highlight: Style,
 }
 
 impl Theme {
@@ -33,9 +32,6 @@ impl Theme {
             error: Style::default().fg(Color::Red),
             border: Style::default().fg(Color::DarkGray),
             active_border: Style::default().fg(Color::Cyan),
-            _highlight: Style::default()
-                .bg(Color::DarkGray)
-                .add_modifier(Modifier::BOLD),
         }
     }
 }
@@ -46,6 +42,8 @@ struct App {
     should_quit: bool,
     nav_items: Vec<&'static str>,
     selected: usize,
+    active: Option<usize>,
+    show_help: bool,
     width: u16,
     height: u16,
 }
@@ -56,6 +54,8 @@ impl App {
             should_quit: false,
             nav_items: vec!["Dashboard", "Records", "Logs", "Settings"],
             selected: 0,
+            active: None,
+            show_help: false,
             width: 0,
             height: 0,
         }
@@ -77,6 +77,11 @@ impl App {
                     self.selected += 1;
                 }
             }
+            KeyCode::Enter => {
+                self.active = Some(self.selected);
+                self.show_help = false;
+            }
+            KeyCode::Char('?') => self.show_help = !self.show_help,
             _ => {}
         }
     }
@@ -175,27 +180,56 @@ fn draw_sidebar(f: &mut Frame, area: Rect, app: &App, theme: &Theme) {
 }
 
 fn draw_main_panel(f: &mut Frame, area: Rect, app: &App, theme: &Theme) {
-    let title = app.nav_items[app.selected];
-    let content = Paragraph::new(vec![
-        Line::from(vec![
-            Span::styled(title, theme.bold),
-            Span::styled(
-                " — Select an item from the sidebar, or press ? for help.",
+    let lines: Vec<Line> = if app.show_help {
+        let mut lines = vec![Line::from(Span::styled("Help", theme.bold)), Line::from("")];
+        for entry in [
+            "j/k      Navigate the sidebar",
+            "enter    Select the highlighted item",
+            "?        Toggle this help",
+            "q        Quit",
+        ] {
+            lines.push(Line::from(Span::styled(entry, theme.base)));
+        }
+        lines
+    } else if let Some(idx) = app.active {
+        let item = app.nav_items[idx];
+        vec![
+            Line::from(Span::styled(item.to_uppercase(), theme.bold)),
+            Line::from(""),
+            Line::from(Span::styled(
+                format!("This is the {} section.", item),
                 theme.muted,
-            ),
-        ]),
-        Line::from(""),
-        Line::from(Span::styled(
-            "Use j/k to navigate, Enter to select, q to quit.",
-            theme.muted,
-        )),
-    ])
-    .wrap(Wrap { trim: true })
-    .block(
-        Block::default()
-            .border_style(theme.active_border)
-            .padding(Padding::new(2, 2, 1, 1)),
-    );
+            )),
+            Line::from(Span::styled(
+                "Press ? for help or q to quit.",
+                theme.muted,
+            )),
+        ]
+    } else {
+        let title = app.nav_items[app.selected];
+        vec![
+            Line::from(vec![
+                Span::styled(title, theme.bold),
+                Span::styled(
+                    " — Select an item from the sidebar, or press ? for help.",
+                    theme.muted,
+                ),
+            ]),
+            Line::from(""),
+            Line::from(Span::styled(
+                "Use j/k to navigate, Enter to select, q to quit.",
+                theme.muted,
+            )),
+        ]
+    };
+
+    let content = Paragraph::new(lines)
+        .wrap(Wrap { trim: true })
+        .block(
+            Block::default()
+                .border_style(theme.active_border)
+                .padding(Padding::new(2, 2, 1, 1)),
+        );
 
     f.render_widget(content, area);
 }

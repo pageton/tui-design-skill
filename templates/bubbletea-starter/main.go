@@ -16,7 +16,6 @@ var (
 	muted    = lipgloss.NewStyle().Foreground(lipgloss.Color("243"))
 	accent   = lipgloss.NewStyle().Foreground(lipgloss.Color("86"))
 	bold     = lipgloss.NewStyle().Bold(true)
-	dim      = lipgloss.NewStyle().Foreground(lipgloss.Color("243"))
 	success  = lipgloss.NewStyle().Foreground(lipgloss.Color("78"))
 	errorRed = lipgloss.NewStyle().Foreground(lipgloss.Color("203"))
 
@@ -36,10 +35,12 @@ type errMsg struct{ err error }
 // --- Model ---
 
 type Model struct {
-	width  int
-	height int
-	items  []string
-	cursor int
+	width    int
+	height   int
+	items    []string
+	cursor   int
+	selected string
+	showHelp bool
 }
 
 func newModel() Model {
@@ -77,10 +78,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 		case "enter":
-			// Handle selection
+			m.selected = m.items[m.cursor]
+			m.showHelp = false
 			return m, nil
 		case "?":
-			// Toggle help
+			m.showHelp = !m.showHelp
 			return m, nil
 		}
 	}
@@ -114,13 +116,26 @@ func (m Model) View() string {
 
 	// Content
 	contentWidth := m.width - sidebarWidth - 4
+	var pane string
+	switch {
+	case m.showHelp:
+		pane = bold.Render("Help") + "\n\n" +
+			base.Render("  j/k      Navigate the sidebar") + "\n" +
+			base.Render("  enter    Select the highlighted item") + "\n" +
+			base.Render("  ?        Toggle this help") + "\n" +
+			base.Render("  q        Quit")
+	case m.selected != "":
+		pane = bold.Render(strings.ToUpper(m.selected)) + "\n\n" +
+			muted.Render("This is the "+m.selected+" section.") + "\n" +
+			muted.Render("Press ? for help or q to quit.")
+	default:
+		pane = bold.Render("Welcome") + "\n\n" +
+			muted.Render("Select an item from the sidebar or press ? for help.")
+	}
 	content := activeBorder.
 		Width(contentWidth - 4).
 		Height(m.height - 6).
-		Render(
-			bold.Render("Welcome") + "\n\n" +
-				muted.Render("Select an item from the sidebar or press ? for help."),
-		)
+		Render(pane)
 
 	// Layout
 	body := lipgloss.JoinHorizontal(lipgloss.Top, sidebar, content)

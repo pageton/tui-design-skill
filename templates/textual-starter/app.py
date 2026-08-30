@@ -63,6 +63,21 @@ class Sidebar(Vertical):
             yield NavItem("Settings", "")
 
 
+SECTION_DESCRIPTIONS = {
+    "Dashboard": "System overview and recent activity.",
+    "Records": "Browse and manage your records.",
+    "Logs": "Recent events and diagnostics.",
+    "Settings": "Application preferences.",
+}
+
+HELP_TEXT = (
+    "j/k      Navigate the sidebar\n"
+    "enter    Select the highlighted item\n"
+    "?        Toggle this help\n"
+    "q        Quit"
+)
+
+
 class ContentPanel(Vertical):
     """Main content area that responds to navigation."""
 
@@ -83,19 +98,27 @@ class ContentPanel(Vertical):
     }
     """
 
-    active_section: reactive[str] = reactive("Dashboard")
+    active_section: reactive[str] = reactive("Dashboard", init=False)
+    show_help: reactive[bool] = reactive(False, init=False)
 
     def compose(self) -> ComposeResult:
         yield Static(self.active_section, id="content-title", classes="title")
-        yield Static(
-            "Select an item from the sidebar, or press ? for help.",
-            id="content-subtitle",
-            classes="subtitle",
-        )
+        yield Static(self._body_text(), id="content-body", classes="subtitle")
+
+    def _body_text(self) -> str:
+        if self.show_help:
+            return HELP_TEXT
+        return SECTION_DESCRIPTIONS.get(self.active_section, "")
+
+    def _refresh(self) -> None:
+        self.query_one("#content-title", Static).update(self.active_section)
+        self.query_one("#content-body", Static).update(self._body_text())
 
     def watch_active_section(self, section: str) -> None:
-        title = self.query_one("#content-title", Static)
-        title.update(section)
+        self._refresh()
+
+    def watch_show_help(self, show: bool) -> None:
+        self._refresh()
 
 
 class TUIStarter(App):
@@ -117,7 +140,17 @@ class TUIStarter(App):
             yield ContentPanel()
         yield Footer()
 
+    def action_toggle_help(self) -> None:
+        self.query_one(ContentPanel).show_help = not self.query_one(ContentPanel).show_help
+
+    def action_cursor_down(self) -> None:
+        self.query_one("#nav-list", ListView).action_cursor_down()
+
+    def action_cursor_up(self) -> None:
+        self.query_one("#nav-list", ListView).action_cursor_up()
+
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         if isinstance(event.item, NavItem):
             content = self.query_one(ContentPanel)
+            content.show_help = False
             content.active_section = event.item.nav_label
