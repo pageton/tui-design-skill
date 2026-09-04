@@ -29,6 +29,7 @@ SCAN_PATHS = [
     "references/*.md",
     "frameworks/*.md",
     "patterns/*.md",
+    "projects/*/README.md",
 ]
 
 BOX_CHARS = set("─│┌┐└┘├┤┬┴┼═║╔╗╚╝╠╣╦╩╬+|-=")
@@ -55,7 +56,10 @@ def extract_blocks(text: str) -> list[list[tuple[int, str]]]:
             if m and "`" not in m.group(2):
                 open_len = len(m.group(1))
                 buf = []
-        elif re.match(r"^`{3,}\s*$", line) and len(line) - len(line.lstrip("`")) >= open_len:
+        elif (
+            re.match(r"^`{3,}\s*$", line)
+            and len(line) - len(line.lstrip("`")) >= open_len
+        ):
             blocks.append(buf)
             open_len = 0
         else:

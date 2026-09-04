@@ -18,6 +18,8 @@ TRIGGER when the user:
 - Asks about TUI frameworks (Bubble Tea, Textual, Ratatui, Ink, etc.)
 - Requests TUI component patterns, keybindings, or interaction design
 - Asks to review TUI code for UX, layout, or design quality
+- Asks for advanced data-app features: pagination, virtual scrolling, sorting, live filtering, theming, history, undo
+- Asks about TUI stability, robustness, crash recovery, resize handling, or production readiness
 
 DO NOT TRIGGER when:
 
@@ -256,12 +258,15 @@ Load and apply these references as needed for the task:
 - `references/component-catalog.md` — Reusable component patterns with examples
 - `references/color-and-emphasis.md` — Color palette strategy and emphasis techniques
 - `references/states-and-feedback.md` — Empty, loading, error, and transient state patterns
+- `references/advanced-patterns.md` — Data grids, pagination, filtering, theming, history, confirm flows
+- `references/stability-and-robustness.md` — Resize gates, panic recovery, async safety, backpressure, reconnect
 - `references/review-checklist.md` — Checklist for TUI UX review
 - `frameworks/bubbletea-go.md` — Go + Bubble Tea architecture and patterns
 - `frameworks/textual-python.md` — Python + Textual architecture and patterns
 - `frameworks/ratatui-rust.md` — Rust + Ratatui architecture and patterns
 - `frameworks/ink-react.md` — TypeScript + Ink architecture and patterns
 - `patterns/` — Screen pattern templates for common TUI types
+- `projects/` — Complete runnable example apps: `dbview-go` (advanced data browser, Bubble Tea) and `log-monitor-rust` (resilient log streamer, Ratatui). Read their source as ground truth for how the references translate into working code; run their tests to see the stability contract verified.
 
 ---
 

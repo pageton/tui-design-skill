@@ -26,6 +26,7 @@ cp -r ~/Projects/tui-design-skill/references ~/.config/opencode/skills/tui-desig
 cp -r ~/Projects/tui-design-skill/frameworks ~/.config/opencode/skills/tui-design/
 cp -r ~/Projects/tui-design-skill/patterns ~/.config/opencode/skills/tui-design/
 cp -r ~/Projects/tui-design-skill/templates ~/.config/opencode/skills/tui-design/
+cp -r ~/Projects/tui-design-skill/projects ~/.config/opencode/skills/tui-design/
 cp ~/Projects/tui-design-skill/SKILL.md ~/.config/opencode/skills/tui-design/SKILL.md
 mkdir -p ~/.config/opencode/commands
 cp ~/Projects/tui-design-skill/commands/opencode-tui-design.md ~/.config/opencode/commands/tui-design.md
@@ -36,6 +37,7 @@ cp -r ~/Projects/tui-design-skill/references ~/.claude/skills/tui-design/
 cp -r ~/Projects/tui-design-skill/frameworks ~/.claude/skills/tui-design/
 cp -r ~/Projects/tui-design-skill/patterns ~/.claude/skills/tui-design/
 cp -r ~/Projects/tui-design-skill/templates ~/.claude/skills/tui-design/
+cp -r ~/Projects/tui-design-skill/projects ~/.claude/skills/tui-design/
 cp ~/Projects/tui-design-skill/SKILL.md ~/.claude/skills/tui-design/SKILL.md
 mkdir -p ~/.claude/commands
 cp ~/Projects/tui-design-skill/commands/claude-code-tui-design.md ~/.claude/commands/tui-design.md
@@ -47,7 +49,7 @@ cp ~/Projects/tui-design-skill/commands/claude-code-tui-design.md ~/.claude/comm
 
    ```bash
    mkdir -p ~/.config/opencode/skills/tui-design
-   cp -r ~/Projects/tui-design-skill/{SKILL.md,references,frameworks,patterns,templates} \
+   cp -r ~/Projects/tui-design-skill/{SKILL.md,references,frameworks,patterns,templates,projects} \
        ~/.config/opencode/skills/tui-design/
    ```
 
@@ -70,7 +72,7 @@ cp ~/Projects/tui-design-skill/commands/claude-code-tui-design.md ~/.claude/comm
 
    ```bash
    mkdir -p ~/.claude/skills/tui-design
-   cp -r ~/Projects/tui-design-skill/{SKILL.md,references,frameworks,patterns,templates} \
+   cp -r ~/Projects/tui-design-skill/{SKILL.md,references,frameworks,patterns,templates,projects} \
        ~/.claude/skills/tui-design/
    ```
 
@@ -113,6 +115,8 @@ tui-design-skill/
 │   ├── component-catalog.md          # 14 component patterns with mockups
 │   ├── color-and-emphasis.md         # Palette strategy, terminal compat
 │   ├── states-and-feedback.md        # Empty/loading/error state patterns
+│   ├── advanced-patterns.md          # Grids, pagination, filtering, theming
+│   ├── stability-and-robustness.md   # Resize, panics, async safety, backpressure
 │   └── review-checklist.md           # 10-category scored UX review
 ├── frameworks/                       # Framework-specific guides
 │   ├── bubbletea-go.md               # Go + Bubble Tea + Lip Gloss
@@ -122,23 +126,38 @@ tui-design-skill/
 ├── patterns/                         # Screen patterns with ASCII layouts
 │   ├── dashboard.md
 │   ├── data-browser.md
+│   ├── database-browser.md           # dbview-style multi-view data tool
 │   ├── form-workflow.md
 │   ├── log-viewer.md
 │   └── file-explorer.md
 ├── scripts/
 │   └── check-mockups.py              # ASCII mockup alignment checker
 ├── justfile                          # Validation pipeline (just check-all)
-└── templates/                        # Runnable starter apps
-    ├── bubbletea-starter/main.go
-    ├── textual-starter/app.py
-    ├── ratatui-starter/
-    │   ├── Cargo.toml
-    │   └── src/main.rs
-    └── ink-starter/
-        ├── package.json
-        ├── package-lock.json
-        ├── tsconfig.json
-        └── src/main.tsx
+├── templates/                        # Runnable starter apps
+│   ├── bubbletea-starter/main.go
+│   ├── textual-starter/app.py
+│   ├── ratatui-starter/
+│   │   ├── Cargo.toml
+│   │   └── src/main.rs
+│   └── ink-starter/
+│       ├── package.json
+│       ├── package-lock.json
+│       ├── tsconfig.json
+│       └── src/main.tsx
+└── projects/                         # Complete runnable example apps
+    ├── dbview-go/                    # Advanced data browser (Bubble Tea)
+    │   ├── main.go                   #   model, view stack, layout math
+    │   ├── update.go                 #   key routing: modal > input > view
+    │   ├── store.go                  #   typed filter/sort/paginate domain
+    │   ├── view.go                   #   grid, status bar, modals, themes
+    │   ├── theme.go                  #   runtime-switchable palettes
+    │   └── *_test.go                 #   logic + render smoke tests
+    └── log-monitor-rust/             # Resilient log streamer (Ratatui)
+        ├── src/main.rs               #   panic-safe terminal guard + loop
+        ├── src/app.rs                #   input model (unit-tested)
+        ├── src/ring.rs               #   bounded buffer w/ drop accounting
+        ├── src/stream.rs             #   simulated producer
+        └── src/ui.rs                 #   stats, viewport, banners
 ```
 
 ## Development
@@ -150,7 +169,7 @@ just check-all      # markdownlint + mockup widths + template compile checks
 just check-mockups  # ASCII mockup alignment only
 ```
 
-`check-all` enforces the repo's own quality rules: every ASCII mockup must render at a fixed width (a misaligned mockup is worse than no mockup — see `AGENTS.md`), markdown must lint clean, and the Bubble Tea, Ratatui, and Textual templates must compile. Each starter also runs directly:
+`check-all` enforces the repo's own quality rules: every ASCII mockup must render at a fixed width (a misaligned mockup is worse than no mockup — see `AGENTS.md`), markdown must lint clean, the Bubble Tea, Ratatui, and Textual templates must compile, and the example projects must compile *and pass their unit tests*. Each starter also runs directly:
 
 ```bash
 cd templates/bubbletea-starter && go run main.go
@@ -159,9 +178,23 @@ cd templates/ratatui-starter   && cargo run
 cd templates/ink-starter       && npm install && npm start
 ```
 
+## Example Projects
+
+Beyond the minimal starters, `projects/` contains complete apps that show how
+the references hold up in real code:
+
+| Project | Stack | Focus |
+|---------|-------|-------|
+| [dbview-go](projects/dbview-go/) | Go + Bubble Tea + Lip Gloss | Advanced data-app patterns: multi-view stack, pagination, typed sorting, live AND-filtering with history, confirm-before-delete, theme cycling — modeled on [dbview](https://github.com/pageton/dbview) |
+| [log-monitor-rust](projects/log-monitor-rust/) | Rust + Ratatui + Crossterm | Stability: backpressure with drop accounting, pause/resume, disconnect/retry, panic-safe terminal restore, min-size gate |
+
+Both ship unit tests that verify the stability contract without a TTY
+(`just check-go-project`, `just check-rust-project`).
+
 ## Example Prompts
 
 - `Build me a beautiful TUI for browsing database records`
+- `Build a dbview-style database explorer with sorting, filtering, and query history`
 - `Turn this CLI deployment tool into a polished interactive TUI`
 - `Redesign this Bubble Tea app so it feels premium`
 - `Create a dashboard-style terminal UI with panels and keyboard navigation`

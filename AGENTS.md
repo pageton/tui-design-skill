@@ -13,6 +13,10 @@ A Markdown-only skill pack consumed by AI coding tools (Claude Code, OpenCode). 
   - `templates/textual-starter/` — `textual run app.py --dev` (requires Textual pip package)
   - `templates/ratatui-starter/` — `cargo run` (requires Rust edition 2021, Ratatui 0.29, Crossterm 0.28)
   - `templates/ink-starter/` — `npm start` (requires Node.js, Ink ^5.2, React ^18.3)
+- **Example projects in `projects/` must compile and pass their unit tests.** They are the reference implementations for the two advanced references — keep them in sync when those references change:
+  - `projects/dbview-go/` — `go vet ./... && go test ./...` (logic + render smoke tests; no TTY needed)
+  - `projects/log-monitor-rust/` — `cargo check && cargo test` (ring/backpressure/input-model tests)
+  - Tests double as stability verification: do not weaken a test to make the pipeline green — fix the app.
 - **Framework guides share a common skeleton:** overview → architecture → project structure → framework-specific sections (styling, keybindings, async, components — named per framework idiom) → best practices/common mistakes → dependencies. Keep that shape when editing `frameworks/*.md`.
 
 ## Architecture
@@ -24,6 +28,7 @@ A Markdown-only skill pack consumed by AI coding tools (Claude Code, OpenCode). 
 - `frameworks/` — Framework-specific guides. One per framework (Bubble Tea, Textual, Ratatui, Ink).
 - `patterns/` — Screen pattern templates with ASCII layouts. Each follows the same structure: description, layout mockup, component breakdown, keybindings, states.
 - `templates/` — Complete runnable starter apps (bubbletea-starter, textual-starter, ratatui-starter, ink-starter). Each is a minimal but real implementation of the skill's design principles.
+- `projects/` — Complete example apps beyond the starters. `dbview-go` is the reference implementation of `references/advanced-patterns.md` (modeled on dbview); `log-monitor-rust` is the reference implementation of `references/stability-and-robustness.md`. Their READMEs map features to reference sections.
 
 ## Design Principles (Non-Negotiable)
 
