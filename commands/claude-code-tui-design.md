@@ -13,6 +13,12 @@ Load and apply these reference files from the installed skill pack at `~/.claude
 - `SKILL.md` — Full skill definition with workflows and principles
 - `references/design-principles.md` — Visual hierarchy, spacing, alignment, borders, layout composition
 - `references/architecture-patterns.md` — State management, component hierarchy, file organization, async
+- `references/framework-selection.md` — Framework trade-off matrix and decision rules
+- `references/terminal-compatibility.md` — Terminal capability matrix, feature fallbacks
+- `references/unicode-and-text.md` — Display width rules, Unicode cases and tests
+- `references/rtl-and-bidi.md` — Arabic/RTL logical-vs-visual rules, shaping, limitations
+- `references/testing-tuis.md` — Unit, snapshot, interaction, and Unicode test harnesses
+- `references/troubleshooting.md` — Symptom → layer attribution → fix procedures
 - `references/interaction-guide.md` — Keybinding conventions, focus management, navigation
 - `references/component-catalog.md` — 14 reusable component patterns with ASCII mockups
 - `references/color-and-emphasis.md` — Color palette strategy and terminal compatibility

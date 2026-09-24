@@ -411,8 +411,9 @@ This provides automatic alternate screen buffer management and responsive resizi
 ## Dependencies
 
 ```bash
-# Core
+# Core (Node.js >= 18)
 npm install react ink
+# or: bun add react ink
 
 # UI components (recommended)
 npm install @inkjs/ui
@@ -426,3 +427,27 @@ npm install fullscreen-ink
 # Development
 npm install -D @biomejs/biome  # Linting and formatting
 ```
+
+Nix ad-hoc shell:
+
+```bash
+nix shell nixpkgs#nodejs_22
+```
+
+- **Runtime**: `react` + `ink`. `string-width` (used by Ink for layout)
+  is already in the tree — don't add another width helper.
+- **Optional**: `@inkjs/ui` components, `fullscreen-ink` (alt screen +
+  resize). Ink has no built-in mouse support; stay keyboard-first.
+- **Dev**: `tsc --noEmit`, `biome check`, a test runner + `ink-testing-library`.
+
+## Unicode Notes
+
+- Ink measures display width via `string-width`; `Box` layout and
+  truncation are width-aware.
+- No BiDi/RTL — see `references/rtl-and-bidi.md`.
+
+## Testing Notes
+
+- `ink-testing-library` renders the app to a string and simulates stdin;
+  pair with `strip-ansi` for layout assertions. Full guidance:
+  `references/testing-tuis.md`.

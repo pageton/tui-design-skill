@@ -2,7 +2,7 @@
 
 ## What This Repo Is
 
-A Markdown-only skill pack consumed by AI coding tools (Claude Code, OpenCode). Not a buildable software project — all files are prose references, command definitions, and starter templates. Validation is `just check-all`: markdownlint, ASCII mockup width checks (`scripts/check-mockups.py`), and compile checks for the starter templates.
+A Markdown-only skill pack consumed by AI coding tools (Claude Code, Codex, OpenCode, ZCode, and any tool following the Agent Skills specification). Not a buildable software project — all files are prose references, command definitions, and starter templates. Validation is `just check-all`: markdownlint, ASCII mockup width checks (`scripts/check-mockups.py`), and compile checks for the starter templates.
 
 ## Editing Constraints
 
@@ -22,7 +22,7 @@ A Markdown-only skill pack consumed by AI coding tools (Claude Code, OpenCode). 
 ## Architecture
 
 - `SKILL.md` — Authoritative skill definition. Triggers, principles, workflows, and output standards all live here.
-- `commands/` — Thin entry points that point the tool at the installed skill pack. Both assume the pack is installed (OpenCode: `~/.config/opencode/skills/tui-design/`, Claude Code: `~/.claude/skills/tui-design/`); they differ only in install paths and frontmatter.
+- `commands/` — Thin entry points that point the tool at the installed skill pack. All four assume the pack is installed (Claude Code: `~/.claude/skills/tui-design/`, OpenCode: `~/.config/opencode/skills/tui-design/`, Codex: `~/.codex/skills/tui-design/`, ZCode: `~/.zcode/skills/tui-design/`); they differ only in install paths and frontmatter.
 - `scripts/` — Validation helpers. `check-mockups.py` enforces fixed-width ASCII mockups.
 - `references/` — Standalone design reference docs loaded on demand. Each file is self-contained.
 - `frameworks/` — Framework-specific guides. One per framework (Bubble Tea, Textual, Ratatui, Ink).
@@ -43,9 +43,17 @@ These are encoded across the skill files and must be preserved in any edits:
 
 ## Installation (from README)
 
-Installation is file copying — no package manager or build step:
+Primary route: `npx skills add pageton/tui-design-skill` (the
+`vercel-labs/skills` CLI) auto-detects installed agents and symlinks the
+pack into each one. Manual install is file copying — no build step:
 
-- **OpenCode:** Copy `SKILL.md` + `references/` + `frameworks/` + `patterns/` + `templates/` into `~/.config/opencode/skills/tui-design/`. Copy `commands/opencode-tui-design.md` into `~/.config/opencode/commands/tui-design.md`.
-- **Claude Code:** Copy the same skill pack into `~/.claude/skills/tui-design/`. Copy `commands/claude-code-tui-design.md` into `~/.claude/commands/tui-design.md`.
+- **Claude Code:** Copy `SKILL.md` + `references/` + `frameworks/` + `patterns/` + `templates/` + `projects/` into `~/.claude/skills/tui-design/`. Copy `commands/claude-code-tui-design.md` into `~/.claude/commands/tui-design.md`.
+- **OpenCode:** Same pack into `~/.config/opencode/skills/tui-design/`. Copy `commands/opencode-tui-design.md` into `~/.config/opencode/commands/tui-design.md`.
+- **Codex:** Same pack into `~/.codex/skills/tui-design/`. Copy `commands/codex-tui-design.md` into `~/.codex/prompts/tui-design.md`.
+- **ZCode:** Same pack into `~/.zcode/skills/tui-design/`. Copy `commands/zcode-tui-design.md` into `~/.zcode/commands/tui-design.md`.
 
-When updating the skill, both install targets may need updating. Both commands delegate to the installed skill pack — neither is self-contained — so the pack must be installed for the slash command to work.
+When updating the skill, every install target may need updating. All
+command files delegate to the installed skill pack — none is
+self-contained — so the pack must be installed for a slash command to
+work. Keep the four `commands/*.md` files in sync when the pack layout or
+paths change.

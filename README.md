@@ -9,86 +9,76 @@ A production-grade AI skill for designing and building exceptionally polished te
 - **Redesign** existing TUIs to feel modern and polished
 - **Review** TUI code with a scored UX assessment
 - **Recommend** frameworks, patterns, and components
+- **Handle** Unicode/RTL text, terminal compatibility, and testing correctly
 
 ## Install
 
-Clone or download this repo, then install into your tool(s) of choice.
+The pack works with any tool that follows the [Agent Skills
+specification](https://agentskills.io) — Claude Code, Codex, OpenCode,
+ZCode, Cursor, Gemini CLI, and 70+ others. Install it with the skills CLI
+(recommended) or copy files manually per tool.
 
-### Quick Install (both tools)
+### Via the skills CLI (recommended)
 
 ```bash
-# Clone the skill
-git clone https://github.com/pageton/tui-design-skill ~/Projects/tui-design-skill
+# One command — auto-detects your installed agents (Claude Code, Codex,
+# OpenCode, ZCode, Cursor, …) and installs for all of them
+npx skills add pageton/tui-design-skill
 
-# Install for OpenCode
-mkdir -p ~/.config/opencode/skills/tui-design
-cp -r ~/Projects/tui-design-skill/references ~/.config/opencode/skills/tui-design/
-cp -r ~/Projects/tui-design-skill/frameworks ~/.config/opencode/skills/tui-design/
-cp -r ~/Projects/tui-design-skill/patterns ~/.config/opencode/skills/tui-design/
-cp -r ~/Projects/tui-design-skill/templates ~/.config/opencode/skills/tui-design/
-cp -r ~/Projects/tui-design-skill/projects ~/.config/opencode/skills/tui-design/
-cp ~/Projects/tui-design-skill/SKILL.md ~/.config/opencode/skills/tui-design/SKILL.md
-mkdir -p ~/.config/opencode/commands
-cp ~/Projects/tui-design-skill/commands/opencode-tui-design.md ~/.config/opencode/commands/tui-design.md
+# Global install (available in all projects) for specific agents
+npx skills add pageton/tui-design-skill -g -a claude-code -a codex -a opencode -a zcode
 
-# Install for Claude Code
-mkdir -p ~/.claude/skills/tui-design
-cp -r ~/Projects/tui-design-skill/references ~/.claude/skills/tui-design/
-cp -r ~/Projects/tui-design-skill/frameworks ~/.claude/skills/tui-design/
-cp -r ~/Projects/tui-design-skill/patterns ~/.claude/skills/tui-design/
-cp -r ~/Projects/tui-design-skill/templates ~/.claude/skills/tui-design/
-cp -r ~/Projects/tui-design-skill/projects ~/.claude/skills/tui-design/
-cp ~/Projects/tui-design-skill/SKILL.md ~/.claude/skills/tui-design/SKILL.md
-mkdir -p ~/.claude/commands
-cp ~/Projects/tui-design-skill/commands/claude-code-tui-design.md ~/.claude/commands/tui-design.md
+# Non-interactive (CI friendly)
+npx skills add pageton/tui-design-skill -g -y
 ```
 
-### OpenCode
+The CLI (`vercel-labs/skills`) symlinks the pack into each agent's skills
+directory, so `npx skills update` keeps every agent on the latest version.
+To use the slash-command entry point (optional — the skill also activates
+automatically), copy the command file as shown below.
 
-1. Copy the skill to your OpenCode skills directory:
+### Manual install per agent
 
-   ```bash
-   mkdir -p ~/.config/opencode/skills/tui-design
-   cp -r ~/Projects/tui-design-skill/{SKILL.md,references,frameworks,patterns,templates,projects} \
-       ~/.config/opencode/skills/tui-design/
-   ```
+Clone or download the repo first:
 
-2. Copy the command file:
+```bash
+git clone https://github.com/pageton/tui-design-skill ~/Projects/tui-design-skill
+```
 
-   ```bash
-   cp ~/Projects/tui-design-skill/commands/opencode-tui-design.md \
-       ~/.config/opencode/commands/tui-design.md
-   ```
+Then install the pack (skill) and the slash command for each tool:
 
-3. Invoke with:
+```bash
+# Claude Code
+mkdir -p ~/.claude/skills/tui-design
+cp -r ~/Projects/tui-design-skill/{SKILL.md,references,frameworks,patterns,templates,projects} \
+    ~/.claude/skills/tui-design/
+cp ~/Projects/tui-design-skill/commands/claude-code-tui-design.md ~/.claude/commands/tui-design.md
+# Invoke: /tui-design Build me a dashboard for monitoring server health
 
-   ```
-   /tui-design Build me a dashboard for monitoring server health
-   ```
+# OpenCode
+mkdir -p ~/.config/opencode/skills/tui-design
+cp -r ~/Projects/tui-design-skill/{SKILL.md,references,frameworks,patterns,templates,projects} \
+    ~/.config/opencode/skills/tui-design/
+mkdir -p ~/.config/opencode/commands
+cp ~/Projects/tui-design-skill/commands/opencode-tui-design.md ~/.config/opencode/commands/tui-design.md
+# Invoke: /tui-design Build me a dashboard for monitoring server health
 
-### Claude Code
+# Codex
+mkdir -p ~/.codex/skills/tui-design
+cp -r ~/Projects/tui-design-skill/{SKILL.md,references,frameworks,patterns,templates,projects} \
+    ~/.codex/skills/tui-design/
+mkdir -p ~/.codex/prompts
+cp ~/Projects/tui-design-skill/commands/codex-tui-design.md ~/.codex/prompts/tui-design.md
+# Invoke: /prompts:tui-design Build me a dashboard for monitoring server health
 
-1. Copy the skill pack so the command can load the reference files:
-
-   ```bash
-   mkdir -p ~/.claude/skills/tui-design
-   cp -r ~/Projects/tui-design-skill/{SKILL.md,references,frameworks,patterns,templates,projects} \
-       ~/.claude/skills/tui-design/
-   ```
-
-2. Copy the command file:
-
-   ```bash
-   mkdir -p ~/.claude/commands
-   cp ~/Projects/tui-design-skill/commands/claude-code-tui-design.md \
-       ~/.claude/commands/tui-design.md
-   ```
-
-3. Invoke with:
-
-   ```
-   /tui-design Build me a dashboard for monitoring server health
-   ```
+# ZCode
+mkdir -p ~/.zcode/skills/tui-design
+cp -r ~/Projects/tui-design-skill/{SKILL.md,references,frameworks,patterns,templates,projects} \
+    ~/.zcode/skills/tui-design/
+mkdir -p ~/.zcode/commands
+cp ~/Projects/tui-design-skill/commands/zcode-tui-design.md ~/.zcode/commands/tui-design.md
+# Invoke: /tui-design Build me a dashboard for monitoring server health
+```
 
 ### From skill.zip
 
@@ -96,7 +86,8 @@ cp ~/Projects/tui-design-skill/commands/claude-code-tui-design.md ~/.claude/comm
 # Unzip to a temporary location
 unzip skill.zip -d ~/Projects/tui-design-skill
 
-# Then follow the OpenCode and/or Claude Code steps above
+# Then follow the manual per-agent steps above, or:
+npx skills add ~/Projects/tui-design-skill
 ```
 
 ## What's Included
@@ -107,10 +98,18 @@ tui-design-skill/
 ├── AGENTS.md                         # Editing constraints for AI coding agents
 ├── commands/                         # Tool-specific command files
 │   ├── claude-code-tui-design.md     # Claude Code slash command
-│   └── opencode-tui-design.md        # OpenCode slash command
+│   ├── opencode-tui-design.md        # OpenCode slash command
+│   ├── codex-tui-design.md           # Codex prompt (slash command)
+│   └── zcode-tui-design.md           # ZCode slash command
 ├── references/                       # Design reference documents
 │   ├── design-principles.md          # Visual hierarchy, spacing, layout
 │   ├── architecture-patterns.md      # State management, components, async
+│   ├── framework-selection.md        # Framework trade-off matrix + decision rules
+│   ├── terminal-compatibility.md     # Terminal capability matrix + fallbacks
+│   ├── unicode-and-text.md           # Display width, Unicode cases and tests
+│   ├── rtl-and-bidi.md               # Arabic/RTL logical-vs-visual rules
+│   ├── testing-tuis.md               # Unit/snapshot/interaction/Unicode tests
+│   ├── troubleshooting.md            # Symptom → layer attribution → fix
 │   ├── interaction-guide.md          # Keybindings, focus, navigation
 │   ├── component-catalog.md          # 14 component patterns with mockups
 │   ├── color-and-emphasis.md         # Palette strategy, terminal compat

@@ -469,10 +469,33 @@ impl Action {
 
 ## Dependencies
 
-```toml
-# Cargo.toml
-[dependencies]
-ratatui = "0.29"
-crossterm = "0.28"
-tokio = { version = "1", features = ["full"] }
+```bash
+cargo add ratatui crossterm
+cargo add tokio --features full          # only if you need async I/O
+cargo add unicode-width                  # display width (usually already a transitive dep)
 ```
+
+Nix ad-hoc shell:
+
+```bash
+nix shell nixpkgs#rustc nixpkgs#cargo
+```
+
+- **Runtime**: `ratatui` + a backend (`crossterm` is the default; termion
+  and termwiz exist). Add `unicode-width` only if you call it directly.
+- **Optional**: `ratatui-widgets`, `tui-textarea`, `tui-tree-widget`,
+  `ratatui-image` (kitty graphics). Add only when used.
+- **Dev**: `cargo fmt`, `cargo clippy -- -D warnings`, `cargo test`.
+
+## Unicode Notes
+
+- Ratatui measures width via `unicode-width`; `Line`/`Span` handle it
+  internally. Don't hand-roll padding/truncation.
+- No BiDi/RTL: text renders in logical order — see
+  `references/rtl-and-bidi.md` and `references/unicode-and-text.md`.
+
+## Testing Notes
+
+- `ratatui::backend::TestBackend` renders to an in-memory buffer:
+  `terminal.backend().assert_buffer(&expected)` — deterministic snapshot
+  tests with no TTY. Full guidance: `references/testing-tuis.md`.

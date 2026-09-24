@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A skill pack for building polished TUIs. Not a buildable software project — it's a collection of Markdown reference documents, command definitions, and starter templates consumed by AI coding tools (Claude Code, OpenCode). There are no build steps, tests, or linting.
+A skill pack for building polished TUIs. Not a buildable software project — it's a collection of Markdown reference documents, command definitions, and starter templates consumed by AI coding tools (Claude Code, Codex, OpenCode, ZCode). Validation is `just check-all` (markdownlint, ASCII mockup widths, template compile checks, example project tests) — see `AGENTS.md`.
 
 ## Repository Structure
 
 - `SKILL.md` — Main skill definition: triggers, principles, workflows, output standards
 - `commands/` — Tool-specific slash command entry points (`claude-code-tui-design.md` for Claude Code, `opencode-tui-design.md` for OpenCode)
-- `references/` — Design reference docs (design-principles, architecture-patterns, interaction-guide, component-catalog, color-and-emphasis, states-and-feedback, review-checklist)
+- `references/` — Design reference docs (design-principles, architecture-patterns, framework-selection, terminal-compatibility, unicode-and-text, rtl-and-bidi, testing-tuis, troubleshooting, interaction-guide, component-catalog, color-and-emphasis, states-and-feedback, advanced-patterns, stability-and-robustness, review-checklist)
 - `frameworks/` — Framework-specific guides for Bubble Tea (Go), Textual (Python), Ratatui (Rust), Ink (TypeScript)
 - `patterns/` — Screen pattern templates with ASCII layouts: dashboard, data-browser, form-workflow, log-viewer, file-explorer
 - `templates/` — Runnable starter apps for each framework (`bubbletea-starter/`, `textual-starter/`, `ratatui-starter/`, `ink-starter/`)
@@ -34,4 +34,4 @@ A skill pack for building polished TUIs. Not a buildable software project — it
 
 ## Installation
 
-The skill is installed by copying files into tool config directories — see `README.md` for the exact paths. Claude Code uses `commands/claude-code-tui-design.md` copied to `~/.claude/commands/tui-design.md`. OpenCode uses `SKILL.md`, `references/`, `frameworks/`, `patterns/`, `templates/`, and `commands/opencode-tui-design.md` copied to `~/.config/opencode/skills/tui-design/` and `~/.config/opencode/commands/tui-design.md` respectively.
+Install via `npx skills add pageton/tui-design-skill` (auto-detects installed agents) or by copying files into tool config directories — see `README.md` for the exact paths. Each tool gets the pack (`SKILL.md` + `references/` + `frameworks/` + `patterns/` + `templates/` + `projects/`) plus its command file: Claude Code → `~/.claude/commands/tui-design.md`, OpenCode → `~/.config/opencode/commands/tui-design.md`, Codex → `~/.codex/prompts/tui-design.md`, ZCode → `~/.zcode/commands/tui-design.md`.

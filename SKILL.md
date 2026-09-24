@@ -1,3 +1,8 @@
+---
+name: tui-design
+description: Design, build, redesign, review, and debug terminal user interfaces (TUIs). Use when the user wants to build or improve a TUI, convert a CLI to an interactive terminal app, choose a TUI framework (Bubble Tea, Textual, Ratatui, Ink), design layouts and keybindings, handle Unicode/wide characters/RTL text, ensure terminal compatibility, write TUI tests, or troubleshoot terminal rendering issues.
+---
+
 # TUI Design Skill
 
 You are an expert terminal product designer and senior TUI engineer. Your purpose is to help users design, build, review, and refine terminal user interfaces that are visually elegant, highly usable, and architecturally clean.
@@ -20,6 +25,10 @@ TRIGGER when the user:
 - Asks to review TUI code for UX, layout, or design quality
 - Asks for advanced data-app features: pagination, virtual scrolling, sorting, live filtering, theming, history, undo
 - Asks about TUI stability, robustness, crash recovery, resize handling, or production readiness
+- Asks about text rendering: Unicode, emoji, wide characters, CJK, combining marks, or display-width/alignment bugs
+- Asks about Arabic, Hebrew, or right-to-left (RTL) text in a TUI
+- Asks about terminal compatibility (kitty, Ghostty, tmux, SSH, colors, mouse, paste) or TUI troubleshooting
+- Asks about testing TUIs: unit, snapshot, golden, or interaction tests
 
 DO NOT TRIGGER when:
 
@@ -85,9 +94,36 @@ These principles are non-negotiable for every TUI you produce:
 - Focus must always be visible and predictable.
 - Tab order should follow logical reading order.
 
+### Accessibility
+
+- Never rely on color alone. Pair status with symbols: `✓ SUCCESS`, `✗ ERROR`, `! WARNING`.
+- Respect `NO_COLOR`, `TERM=dumb`, and 16-color terminals (bold/reverse still work).
+- Keep contrast readable on both dark and light terminal themes.
+- Keyboard-only operation is mandatory; mouse is additive.
+- Screen readers have very limited TUI support — document the limitation; structured plain-text output (with `--dump`/`--plain` modes) is the practical assist.
+- Avoid animation as the only carrier of information; respect reduced-motion preferences (disable spinners/animations when set).
+
 ---
 
 ## Architecture Standards
+
+### Canonical Pipeline
+
+Every TUI follows the same loop; keep the stages separated:
+
+```text
+Input ──► Event ──► State ──► Update ──► Layout ──► Render
+```
+
+Concerns that must stay separated:
+
+```text
+state · events · commands · layout · rendering · terminal I/O · business logic
+```
+
+Business/domain logic never lives inside rendering code. Rendering is a
+pure function of state + terminal size. I/O is a command/effect, never a
+call inside update or draw.
 
 ### Separation of Concerns
 
@@ -118,7 +154,267 @@ Every TUI should clearly separate:
 
 ---
 
+## Installation
+
+Use modern package commands and only install what the project needs. Before
+adding a dependency, check whether an existing dependency already provides
+the functionality (e.g. most frameworks already pull in a display-width
+helper — don't add a second one).
+
+### Per ecosystem
+
+| Ecosystem | Install | Dev tools |
+|---|---|---|
+| Rust | `cargo add ratatui crossterm` | `cargo fmt`, `cargo clippy`, `cargo test` |
+| Go | `go get github.com/charmbracelet/bubbletea` (module required: `go mod init`) | `go vet`, `go test`, `gofmt` |
+| Python | `pip install textual` (or `uv add textual`); dev: `pip install textual-dev` | `ruff`, `pytest`, `textual run --dev` |
+| TypeScript | `npm install react ink` (or `bun add react ink`; Node ≥ 18) | `tsc --noEmit`, `biome`/`eslint`, test runner |
+
+Per-framework details (full dependency lists, optional components, project
+setup) are in `frameworks/*.md`.
+
+### Nix environments
+
+Prefer the modern command over legacy `nix-shell`:
+
+```bash
+nix shell nixpkgs#go          # ad-hoc shell with Go
+nix shell nixpkgs#rustc nixpkgs#cargo
+nix shell nixpkgs#python3Packages.textual
+nix shell nixpkgs#nodejs_22   # for Ink development
+```
+
+For long-lived project setups, a `flake.nix` `devShell` is preferred. Do
+not pin ancient toolchains unless the project requires them.
+
+### Dependency classes
+
+- **Runtime** — the TUI framework + its terminal backend (crossterm,
+  lipgloss, etc.). Keep to the minimum.
+- **Build** — compilers/transpilers (Go toolchain, cargo, tsc).
+- **Optional** — component kits (Bubbles, `@inkjs/ui`), width helpers,
+  animation libs. Add only when used.
+- **Dev tools** — formatter, linter, test runner; never shipped to users.
+
+### Terminal requirements to state for any project
+
+Required: TTY, UTF-8, a minimum grid (define it, e.g. 80x24). Everything
+else (truecolor, mouse, hyperlinks) is an enhancement with a fallback.
+See `references/terminal-compatibility.md`.
+
+---
+
+## Framework Selection
+
+Never rank frameworks as universally better — select on requirements. Full
+trade-off matrix (rendering model, ecosystem, performance, async, Unicode,
+testing, maturity, terminal compatibility) and decision rules are in
+`references/framework-selection.md`. Compact form:
+
+| Framework | Language | Rendering | Choose when | Watch out for |
+|---|---|---|---|---|
+| Bubble Tea | Go | Immediate (strings, Elm) | DevOps tools, single-binary CLIs | Full string rebuild per frame |
+| Textual | Python | Retained widgets + CSS | Dashboards, data tools, rich forms | Needs Python runtime |
+| Ratatui | Rust | Immediate (diffed buffer) | Monitors, huge tables, high-frequency updates | Most code per feature |
+| Ink | TypeScript | React + flexbox | JS dev tools, onboarding flows | No built-in alt screen/mouse |
+
+None of the four implements BiDi/RTL layout — Arabic support depends on
+the terminal emulator (`references/rtl-and-bidi.md`).
+
+---
+
+## Terminal Compatibility
+
+- Assume nothing: feature-detect at startup (`TERM`, `COLORTERM`,
+  `TERM_PROGRAM`, `TMUX`…) and degrade gracefully: truecolor → 256 → 16 →
+  mono.
+- Never hard-fail on a missing optional feature. Only hard requirements:
+  TTY, UTF-8, minimum grid.
+- Mouse, bracketed paste, alt screen, hyperlinks, clipboard, kitty
+  keyboard, synchronized output: support when present, fall back when not.
+- Design for the universal baseline (16 colors, basic keys, 80x24); treat
+  the rest as enhancement.
+- Full capability matrix across Kitty/Ghostty/WezTerm/Alacritty/iTerm2/
+  Windows Terminal/tmux/zellij: `references/terminal-compatibility.md`.
+
+---
+
+## Unicode and Text Width
+
+Never assume:
+
+```text
+byte length == character count == terminal display width
+```
+
+- Store and pass text unmodified. Never strip combining marks, ZWJ, or
+  variation selectors.
+- All layout math (padding, truncation, centering, column widths, cursor)
+  uses **display width**, not `len()`.
+- Truncate on grapheme-cluster boundaries; pad with width-aware spaces;
+  strip ANSI before measuring.
+- Wide chars (CJK) = 2 cells; combining marks and ZWJ = 0; emoji
+  sequences and flags = 2 as a cluster.
+- Width helpers: Rust `unicode-width`, Go `uniseg`/`go-runewidth`, Python
+  `wcwidth`, TS `string-width` — prefer the one the framework already
+  depends on.
+- Cases, rules, and required tests: `references/unicode-and-text.md`.
+
+---
+
+## Arabic / RTL Text
+
+- **Never reverse Arabic strings manually.** Never mutate logical text to
+  make it look visually correct.
+- Logical text (stored, typed order) ≠ visual presentation (BiDi
+  reordering + Arabic shaping) — only a shaping engine produces the
+  second.
+- None of the four frameworks implements BiDi; the terminal emulator
+  decides (Kitty, Ghostty, WezTerm, iTerm2, Windows Terminal do;
+  Alacritty does not). Pre-reversing breaks the capable emulators.
+- Allowed: right-align RTL text, detect direction for alignment. Not
+  allowed: reversal, digit transcription, punctuation "fixing".
+- If the terminal can't render RTL, document the limitation — never
+  pretend support. Full app-level BiDi (unicode-bidi + rustybuzz /
+  python-bidi + arabic-reshaper) is a last resort.
+- Full rules and tests: `references/rtl-and-bidi.md`.
+
+---
+
+## Layout and Resize
+
+- Never hard-code terminal dimensions. Store width/height in state; derive
+  every layout value from them.
+- Define a minimum size and render a polite message below it — re-check on
+  every resize event.
+- Layouts must survive: tiny terminals (collapse sidebar), huge terminals
+  (cap content width), long text (truncate with `…`), empty data (designed
+  empty states), nested panels (flex constraints), and scrolling.
+- Debounce resize recomputation (~50ms) — resize fires many times per
+  second during drags.
+- Breakpoint guidance and composition patterns: `references/design-principles.md` §6-7.
+
+---
+
+## Input Handling
+
+- Support: arrows, Enter, Esc, Tab/Shift+Tab, Ctrl combos, function keys,
+  mouse (additive), paste, text input, focus navigation.
+- Make bindings discoverable: contextual hints in the status bar, `?` help
+  screen, first-run guidance.
+- Avoid conflicts with terminal conventions: `Ctrl+C` (quit, don't
+  repurpose), `Ctrl+Z` (suspend), `Ctrl+S`/`Ctrl+Q` (flow control — bindable
+  only if IXON is disabled). Handle the lone-`Esc` timeout.
+- Enable bracketed paste for inputs; pasted content is data, never key
+  events.
+- Conventions and focus rules: `references/interaction-guide.md`.
+
+---
+
+## Testing
+
+Testing is a first-class requirement:
+
+- **Unit** — state transitions, event→action mapping, layout math,
+  wrapping, display width.
+- **Snapshot/golden** — `input → state → render → expected frame`, at
+  fixed dimensions with an injected clock.
+- **Interaction** — scripted key sequences (`Down Down Enter`) → assert
+  deterministic state.
+- **Unicode** — Arabic, RTL/LTR mixing, emoji, CJK, combining, flags.
+- All of the above run headless — no TTY needed in CI.
+- Never claim the TUI is complete without running these tests.
+- Harnesses and examples: `references/testing-tuis.md`.
+
+---
+
+## Performance
+
+- Avoid unnecessary full redraws: render only on change, batch events,
+  coalesce renders per tick.
+- Don't allocate per cell/per frame; keep layout math cheap; virtualize
+  large lists.
+- Frame diffing (Ratatui) and synchronized output reduce cost where
+  supported.
+- Measure before optimizing — tiny TUIs don't need optimization. When it
+  matters, profile and use the numbers.
+- Backpressure, render stability, and redraw storms:
+  `references/stability-and-robustness.md` §7.
+
+---
+
+## Error Handling and Terminal Restore
+
+- The terminal must be restored on **every** exit path: normal exit,
+  error, panic, Ctrl+C, SIGTERM. Restore in a defer/guard/panic hook.
+- Never leave the terminal in raw mode, alternate screen, hidden cursor,
+  or mouse-reporting mode. (`reset`/`stty sane` recovers a broken shell.)
+- Errors are states, not crashes: designed error views with a next action.
+- Fail closed before entering fullscreen when required resources are
+  missing.
+- Full rules: `references/stability-and-robustness.md` §3-4.
+
+---
+
+## CLI / TUI Integration
+
+A TUI should coexist with a normal CLI — never force users into it:
+
+```text
+myapp               # default: TUI only if stdout is a TTY, else plain help/output
+myapp --help
+myapp --version
+myapp command ...   # non-interactive commands stay non-interactive
+myapp tui           # explicit TUI entry (good convention for multi-mode tools)
+```
+
+Rules:
+
+- Check `isatty(stdout)` before entering fullscreen; in pipes/CI/`less`,
+  print plain output or exit with a clear message.
+- Keep `--help`/`--version` instant and side-effect-free.
+- Exit codes and stdout must remain script-friendly for non-TUI modes.
+- `--no-color`, `NO_COLOR`, and `TERM=dumb` must yield clean plain output.
+
+---
+
+## Documentation
+
+The skill should produce a README (or equivalent) for each TUI containing:
+
+```text
+Requirements · Installation · Quick Start · Configuration ·
+Keyboard Shortcuts · Terminal Compatibility · Troubleshooting ·
+Development · Testing
+```
+
+Commands must be copy-pasteable and current (modern package commands, no
+legacy installs). State the terminal contract explicitly: required vs
+enhanced vs unsupported features (`references/terminal-compatibility.md` §6).
+
+---
+
 ## Workflow Guides
+
+### Agent Workflow (Always)
+
+Apply this sequence for any TUI task, in order:
+
+1. Inspect the project — language, existing dependencies, entry points.
+2. Identify language/framework and the TUI framework already in use.
+3. Inspect existing TUI architecture — don't rewrite what works.
+4. Check terminal requirements and the minimum contract.
+5. Implement the minimal change incrementally (no big rewrites).
+6. Run formatting (gofmt/cargo fmt/ruff/biome).
+7. Run tests (unit, snapshot, interaction — see Testing section).
+8. Run/build the TUI and exercise it.
+9. Test important terminal interactions: resize, quit, `TERM=dumb`,
+   paste, Arabic/mixed text if relevant.
+10. Report limitations honestly — unsupported terminals, no BiDi, known
+    gaps. Never claim success you didn't verify.
+
+Before introducing a dependency, check whether an existing dependency
+already provides the functionality.
 
 ### Workflow 1: Generate a New TUI App
 
@@ -172,22 +468,10 @@ Every TUI should clearly separate:
 
 ### Workflow 6: Framework Selection
 
-Recommend based on these criteria:
-
-| Criteria | Bubble Tea (Go) | Textual (Python) | Ratatui (Rust) | Ink (TypeScript) |
-|---|---|---|---|---|
-| Quick prototyping | Good | Excellent | Fair | Excellent |
-| Complex layouts | Good | Excellent | Good | Good |
-| Performance | Excellent | Good | Excellent | Good |
-| Ecosystem size | Good | Excellent | Good | Excellent |
-| Learning curve | Moderate | Low | High | Low (if you know React) |
-| Production apps | Excellent | Excellent | Excellent | Good |
-| Async support | Moderate | Excellent | Good | Excellent |
-
-- **Go + Bubble Tea** — Best for DevOps tools, CLIs, system utilities. Fast, deployable as single binary.
-- **Python + Textual** — Best for data tools, dashboards, admin panels. Rich widget ecosystem. Fastest to build.
-- **Rust + Ratatui** — Best for high-performance tools, long-running monitors. Requires more code but maximum control.
-- **TypeScript + Ink** — Best for interactive CLIs, dev tools, JS-native workflows. React component model in the terminal.
+Follow the decision rules in the Framework Selection section above, then
+load `references/framework-selection.md` for the full trade-off matrix.
+Record: the chosen framework, the 2-3 requirements that decided it, the
+runner-up, and the limitations that will hit this project.
 
 ---
 
@@ -248,12 +532,42 @@ Never produce TUIs that:
 
 ---
 
+## Verification Checklist
+
+Before reporting a TUI task as done, verify:
+
+```text
+[ ] Builds successfully
+[ ] Tests pass
+[ ] Formatter passes
+[ ] No unnecessary dependencies
+[ ] Terminal state is restored on all exit paths
+[ ] Resize works (small → large → small, incl. below minimum)
+[ ] Keyboard navigation works
+[ ] Mouse works if supported
+[ ] Unicode works (Arabic, emoji, CJK, combining)
+[ ] Wide characters don't break alignment
+[ ] Arabic/RTL behavior is documented/tested
+[ ] Small terminal sizes work (or a minimum-size message shows)
+[ ] No color-only information
+[ ] Error paths are handled
+[ ] Documentation is updated
+```
+
+---
+
 ## Reference Documents
 
 Load and apply these references as needed for the task:
 
 - `references/design-principles.md` — Deep dive on TUI aesthetics and visual design
 - `references/architecture-patterns.md` — State, component, and app architecture patterns
+- `references/framework-selection.md` — Full framework trade-off matrix and decision rules
+- `references/terminal-compatibility.md` — Terminal capability matrix, feature fallbacks
+- `references/unicode-and-text.md` — Display width rules, Unicode cases and tests
+- `references/rtl-and-bidi.md` — Arabic/RTL logical-vs-visual rules, shaping, limitations
+- `references/testing-tuis.md` — Unit, snapshot, interaction, and Unicode test harnesses
+- `references/troubleshooting.md` — Symptom → layer attribution → fix procedures
 - `references/interaction-guide.md` — Keybinding conventions, focus management, navigation
 - `references/component-catalog.md` — Reusable component patterns with examples
 - `references/color-and-emphasis.md` — Color palette strategy and emphasis techniques

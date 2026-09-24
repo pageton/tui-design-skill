@@ -314,8 +314,34 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 ## Dependencies
 
 ```bash
+go mod init myapp
 go get github.com/charmbracelet/bubbletea
 go get github.com/charmbracelet/lipgloss
-go get github.com/charmbracelet/bubbles
-go get github.com/charmbracelet/harmonica   # For animations
+go get github.com/charmbracelet/bubbles     # component kit: list, table, viewport, textinput
+go get github.com/charmbracelet/harmonica   # optional: animations
 ```
+
+Nix ad-hoc shell:
+
+```bash
+nix shell nixpkgs#go
+```
+
+- **Runtime**: `bubbletea`; `lipgloss` for styling/layout (nearly always
+  used). Display-width helpers come via `rivo/uniseg` (already a Lip Gloss
+  dependency — don't add a second width library).
+- **Optional**: `bubbles`, `huh` (forms), `glamour` (markdown).
+- **Dev**: `gofmt`, `go vet ./...`, `go test ./...`.
+
+## Unicode Notes
+
+- Lip Gloss pads/truncates by display width (uniseg). Use its
+  `.Width(n)`/`.MaxWidth(n)` instead of manual slicing.
+- No BiDi/RTL — see `references/rtl-and-bidi.md`.
+
+## Testing Notes
+
+- `Update(model, msg)` is pure: feed `tea.KeyMsg`s directly and assert
+  state. `View()` returns a string — golden-file snapshots are trivial.
+- End-to-end interaction: `teatest`. Full guidance:
+  `references/testing-tuis.md`.

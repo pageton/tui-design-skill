@@ -399,6 +399,26 @@ async def test_dashboard_loads():
 ## Installation
 
 ```bash
+# Runtime
 pip install textual
-textual run myapp/app.py  # With hot reload during development
+# or: uv add textual
+
+# Development (devtools, docs, snapshot testing)
+pip install textual-dev
+
+# Nix ad-hoc shell
+nix shell nixpkgs#python3Packages.textual
 ```
+
+- **Runtime**: `textual` only (depends on `rich`, which supplies the
+  width/segment handling).
+- **Dev**: `textual run app.py --dev` (hot reload + console),
+  `textual-dev` (includes `pytest-textual-snapshot`), `ruff`.
+- Requires a UTF-8 terminal; Python 3.8+ (3.9+ for recent Textual).
+
+## Unicode Notes
+
+- Textual measures display width via Rich internally — widgets pad and
+  truncate correctly. Don't pre-pad strings yourself.
+- No BiDi/RTL support: Arabic renders in logical order (documented
+  limitation) — see `references/rtl-and-bidi.md`.
