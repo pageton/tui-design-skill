@@ -221,3 +221,7 @@ The skill is opinionated about these defaults:
 | Textual | Python | Data tools, dashboards, admin panels |
 | Ratatui + Crossterm | Rust | High-performance tools, long-running monitors |
 | Ink + React | TypeScript | Interactive CLIs, dev tools, JS-native workflows |
+
+## License
+
+MIT — see [LICENSE](LICENSE).

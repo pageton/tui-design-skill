@@ -2,37 +2,63 @@
 
 ## What This Repo Is
 
-A Markdown-only skill pack consumed by AI coding tools (Claude Code, Codex, OpenCode, ZCode, and any tool following the Agent Skills specification). Not a buildable software project — all files are prose references, command definitions, and starter templates. Validation is `just check-all`: markdownlint, ASCII mockup width checks (`scripts/check-mockups.py`), and compile checks for the starter templates.
+A Markdown-only skill pack consumed by AI coding tools (Claude Code, Codex, OpenCode, ZCode, and any Agent Skills-compliant tool). No build step, no runtime — all files are prose references, command definitions, and starter templates. `CLAUDE.md` is an older, smaller subset; this file is authoritative.
+
+## Verification
+
+Run `just check-all` before committing. Individual recipes:
+
+- `lint-md` — markdownlint over `references frameworks patterns projects SKILL.md README.md commands`
+- `check-mockups` — `scripts/check-mockups.py` (fixed-width mockup enforcement)
+- `check-rust` / `check-go` / `check-python` — starter templates compile/vet/py_compile
+- `check-go-project` / `check-rust-project` — example projects compile and pass tests
+- `build-rust` / `build-go` / `clean` — build templates, clean artifacts
+
+Gotchas an agent will otherwise guess wrong:
+
+- `.markdownlint.json` disables MD013 (line length) and MD040 (code-fence language). Long lines and bare code fences are intentional — do not "fix" them.
+- `check-mockups` scans every `.md` in the checked dirs: all frame lines of a mockup must be equal width and a status bar must match its frame. A misaligned mockup is worse than no mockup.
+- Display-width claims in `references/unicode-and-text.md` must be verified with a real width library (e.g. `string-width` from `templates/ink-starter/node_modules`), never counted by hand.
 
 ## Editing Constraints
 
-- **ASCII mockups must render at fixed width.** Use box-drawing characters (Unicode `─ │ ┌ ┐ └ ┘ ├ ┤ ┬ ┴` or ASCII `+ - |`) consistently within each mockup, and keep the status bar the same width as the frame it belongs to. Verify with `just check-mockups` (runs `scripts/check-mockups.py`) before committing — a misaligned mockup is worse than no mockup.
-- **Component numbering in `references/component-catalog.md`** is cross-referenced. When adding components, continue the existing numbering scheme. Do not renumber existing entries.
-- **Starter templates in `templates/` must be runnable as-is.** No placeholder pseudocode. Verify with the framework toolchain before changing:
-  - `templates/bubbletea-starter/` — `go run main.go` (requires Go 1.25+, Bubble Tea v1.3, Lip Gloss v1.1)
-  - `templates/textual-starter/` — `textual run app.py --dev` (requires Textual pip package)
-  - `templates/ratatui-starter/` — `cargo run` (requires Rust edition 2021, Ratatui 0.29, Crossterm 0.28)
-  - `templates/ink-starter/` — `npm start` (requires Node.js, Ink ^5.2, React ^18.3)
-- **Example projects in `projects/` must compile and pass their unit tests.** They are the reference implementations for the two advanced references — keep them in sync when those references change:
-  - `projects/dbview-go/` — `go vet ./... && go test ./...` (logic + render smoke tests; no TTY needed)
-  - `projects/log-monitor-rust/` — `cargo check && cargo test` (ring/backpressure/input-model tests)
-  - Tests double as stability verification: do not weaken a test to make the pipeline green — fix the app.
-- **Framework guides share a common skeleton:** overview → architecture → project structure → framework-specific sections (styling, keybindings, async, components — named per framework idiom) → best practices/common mistakes → dependencies. Keep that shape when editing `frameworks/*.md`.
+- **Mockups render at fixed width.** Use box-drawing chars (`─ │ ┌ ┐ └ ┘ ├ ┤ ┬ ┴`) or ASCII (`+ - |`) consistently within one mockup; status bar width = frame width. Verify with `just check-mockups`.
+- **Component numbering in `references/component-catalog.md`** is cross-referenced elsewhere. Continue the numbering; never renumber existing entries.
+- **Starter templates must run as-is** — no placeholder pseudocode. Verify with the toolchain before changing:
+  - `templates/bubbletea-starter/` — `go run main.go` (Go 1.25+, Bubble Tea v1.3, Lip Gloss v1.1)
+  - `templates/textual-starter/` — `textual run app.py --dev` (Textual pip package)
+  - `templates/ratatui-starter/` — `cargo run` (edition 2021, Ratatui 0.29, Crossterm 0.28)
+  - `templates/ink-starter/` — `npm start` (Node.js, Ink ^5.2, React ^18.3)
+- **Example projects must compile and pass unit tests** — they are the reference implementations of `references/advanced-patterns.md` and `references/stability-and-robustness.md`; keep them in sync when those references change:
+  - `projects/dbview-go/` — `go vet ./... && go test ./...` (headless; no TTY needed)
+  - `projects/log-monitor-rust/` — `cargo check && cargo test`
+  - Never weaken a test to make the pipeline green — fix the app.
+- **Framework guides share a skeleton:** overview → architecture → project structure → framework sections (styling, keybindings, async, components) → best practices/common mistakes → dependencies. Keep that shape in `frameworks/*.md`.
 
 ## Architecture
 
-- `SKILL.md` — Authoritative skill definition. Triggers, principles, workflows, and output standards all live here.
-- `commands/` — Thin entry points that point the tool at the installed skill pack. All four assume the pack is installed (Claude Code: `~/.claude/skills/tui-design/`, OpenCode: `~/.config/opencode/skills/tui-design/`, Codex: `~/.codex/skills/tui-design/`, ZCode: `~/.zcode/skills/tui-design/`); they differ only in install paths and frontmatter.
-- `scripts/` — Validation helpers. `check-mockups.py` enforces fixed-width ASCII mockups.
-- `references/` — Standalone design reference docs loaded on demand. Each file is self-contained.
-- `frameworks/` — Framework-specific guides. One per framework (Bubble Tea, Textual, Ratatui, Ink).
-- `patterns/` — Screen pattern templates with ASCII layouts. Each follows the same structure: description, layout mockup, component breakdown, keybindings, states.
-- `templates/` — Complete runnable starter apps (bubbletea-starter, textual-starter, ratatui-starter, ink-starter). Each is a minimal but real implementation of the skill's design principles.
-- `projects/` — Complete example apps beyond the starters. `dbview-go` is the reference implementation of `references/advanced-patterns.md` (modeled on dbview); `log-monitor-rust` is the reference implementation of `references/stability-and-robustness.md`. Their READMEs map features to reference sections.
+- `SKILL.md` — authoritative skill definition (triggers, principles, workflows, standards). The frontmatter `name`/`description` is required for skill discovery by agents.
+- `commands/` — four thin entry points that delegate to the installed pack. None is self-contained.
+- `references/` — self-contained design docs loaded on demand; one concern per file.
+- `frameworks/` — one guide per framework. `patterns/` — screen-pattern templates. `templates/` — runnable starters. `projects/` — reference implementations.
+
+## Cross-Reference Maintenance (easy to miss)
+
+The whole repo is installed as **one skill directory** (`npx skills add` discovers the root `SKILL.md` as skill `tui-design`), and `SKILL.md`/`commands`/`references` link each other by relative path. When adding, renaming, or removing a reference file, update in the same change:
+
+1. `SKILL.md` → "Reference Documents" list
+2. `commands/claude-code-tui-design.md` → load list
+3. `README.md` → "What's Included" tree (and install instructions if paths changed)
+
+When the pack layout changes, keep the four `commands/*.md` files in sync.
+
+## Installation
+
+Primary: `npx skills add pageton/tui-design-skill` (the `vercel-labs/skills` CLI; auto-detects agents, symlinks the pack). Manual: copy `SKILL.md` + `references/` + `frameworks/` + `patterns/` + `templates/` + `projects/` into each agent's skills dir, plus that tool's command file (`~/.claude/commands/`, `~/.config/opencode/commands/`, `~/.codex/prompts/`, `~/.zcode/commands/`). Exact paths: `README.md`.
 
 ## Design Principles (Non-Negotiable)
 
-These are encoded across the skill files and must be preserved in any edits:
+Encoded across the skill files; preserve in any edits:
 
 1. Start monochrome; add color only where it earns its place (max 3-4 colors)
 2. Generous spacing (min 1 cell inside borders, prefer 2); tight spacing is a design smell
@@ -40,20 +66,3 @@ These are encoded across the skill files and must be preserved in any edits:
 4. All states designed: empty, loading, error, interactive — never afterthoughts
 5. Composable architecture: separate domain, state, view, and input handling
 6. Responsive to terminal resize; define minimum dimensions
-
-## Installation (from README)
-
-Primary route: `npx skills add pageton/tui-design-skill` (the
-`vercel-labs/skills` CLI) auto-detects installed agents and symlinks the
-pack into each one. Manual install is file copying — no build step:
-
-- **Claude Code:** Copy `SKILL.md` + `references/` + `frameworks/` + `patterns/` + `templates/` + `projects/` into `~/.claude/skills/tui-design/`. Copy `commands/claude-code-tui-design.md` into `~/.claude/commands/tui-design.md`.
-- **OpenCode:** Same pack into `~/.config/opencode/skills/tui-design/`. Copy `commands/opencode-tui-design.md` into `~/.config/opencode/commands/tui-design.md`.
-- **Codex:** Same pack into `~/.codex/skills/tui-design/`. Copy `commands/codex-tui-design.md` into `~/.codex/prompts/tui-design.md`.
-- **ZCode:** Same pack into `~/.zcode/skills/tui-design/`. Copy `commands/zcode-tui-design.md` into `~/.zcode/commands/tui-design.md`.
-
-When updating the skill, every install target may need updating. All
-command files delegate to the installed skill pack — none is
-self-contained — so the pack must be installed for a slash command to
-work. Keep the four `commands/*.md` files in sync when the pack layout or
-paths change.
