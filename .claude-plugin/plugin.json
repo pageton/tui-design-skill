@@ -1,0 +1,15 @@
+{
+  "name": "tui-design",
+  "displayName": "TUI Design",
+  "description": "Design and build polished terminal user interfaces (TUI) with production-grade patterns for Bubble Tea, Textual, Ratatui, and Ink.",
+  "version": "0.1.0",
+  "author": {
+    "name": "pageton",
+    "email": "pageton@proton.me"
+  },
+  "homepage": "https://github.com/pageton/tui-design-skill",
+  "repository": "https://github.com/pageton/tui-design-skill",
+  "keywords": ["tui", "terminal", "cli", "design", "bubbletea", "textual", "ratatui", "ink"],
+  "skills": "./skills/",
+  "commands": ["./commands/tui-design.md"]
+}

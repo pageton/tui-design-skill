@@ -21,15 +21,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SCAN_PATHS = [
-    "SKILL.md",
     "README.md",
     "AGENTS.md",
     "CLAUDE.md",
     "commands/*.md",
-    "references/*.md",
-    "frameworks/*.md",
-    "patterns/*.md",
-    "projects/*/README.md",
+    "opencode/commands/*.md",
+    "codex/commands/*.md",
+    "zcode/commands/*.md",
+    "skills/tui-design/SKILL.md",
+    "skills/tui-design/references/*.md",
+    "skills/tui-design/frameworks/*.md",
+    "skills/tui-design/patterns/*.md",
+    "skills/tui-design/projects/*/README.md",
 ]
 
 BOX_CHARS = set("─│┌┐└┘├┤┬┴┼═║╔╗╚╝╠╣╦╩╬+|-=")

@@ -1,0 +1,15 @@
+{
+  "name": "tui-design-skill",
+  "description": "Marketplace for the tui-design plugin: design and build polished terminal user interfaces.",
+  "owner": {
+    "name": "pageton",
+    "email": "pageton@proton.me"
+  },
+  "plugins": [
+    {
+      "name": "tui-design",
+      "description": "Design and build polished terminal user interfaces (TUI) with production-grade patterns for Bubble Tea, Textual, Ratatui, and Ink.",
+      "source": "./"
+    }
+  ]
+}
