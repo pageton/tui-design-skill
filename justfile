@@ -3,12 +3,12 @@
 
 # --- Configuration ---
 
-md_dirs := "skills/tui-design/references skills/tui-design/frameworks skills/tui-design/patterns skills/tui-design/projects skills/tui-design/SKILL.md README.md commands opencode/commands codex/commands zcode/commands"
+md_dirs := "skills/tui-design/references skills/tui-design/frameworks skills/tui-design/patterns skills/tui-design/projects skills/tui-design/SKILL.md evals README.md commands opencode/commands codex/commands zcode/commands"
 
 # --- Composite targets ---
 
 # Run all validation checks
-check-all: lint-md check-mockups check-crossrefs test-scripts check-rust check-go check-python check-go-project check-rust-project
+check-all: lint-md check-mockups check-crossrefs check-evals check-install check-compatibility test-scripts check-rust check-go check-python check-go-project check-rust-project
     @echo "All checks passed."
 
 # --- Individual checks ---
@@ -24,6 +24,18 @@ check-mockups:
 # Check cross-references: SKILL.md docs list, README tree, command files, manifests
 check-crossrefs:
     python3 scripts/check-crossrefs.py
+
+# Validate eval scenarios: skeleton, categories, coverage, reference paths
+check-evals:
+    python3 scripts/check-evals.py
+
+# Verify documented installs: simulate README copy commands, doc contracts
+check-install:
+    python3 scripts/check-install.py
+
+# Check the skill pack stays agent-agnostic; agent specifics stay in commands
+check-compatibility:
+    python3 scripts/check-compatibility.py
 
 # Unit tests for the validation scripts
 test-scripts:

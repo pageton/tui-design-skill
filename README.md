@@ -13,6 +13,8 @@ A production-grade AI skill for designing and building exceptionally polished te
 
 ## Install
 
+Install each agent once — the Claude Code plugin **or** the skills pack for that agent, not both. Mixing them duplicates the skill and can leave two copies drifting apart.
+
 ### Claude Code
 
 Installed as a plugin, through the normal marketplace mechanism. No manual file copying.
@@ -104,6 +106,26 @@ cp ~/Projects/tui-design-skill/zcode/commands/tui-design.md ~/.zcode/commands/tu
 # Invoke: /tui-design Build me a dashboard for monitoring server health
 ```
 
+## Updating
+
+- **Claude Code plugin:** marketplace plugins keep themselves current; use `/plugin` to check or manage the installed version.
+- **Skills CLI installs:** `npx skills update` — symlinked packs pick up the latest version for every detected agent.
+- **Manual copies:** re-run the copy commands from the install section above; they overwrite in place.
+
+## Agent Compatibility
+
+The skill files (`SKILL.md`, `references/`, `frameworks/`, `patterns/`) are plain Agent Skills markdown with no agent-specific content, so they load verbatim everywhere. Only the entry point differs per tool.
+
+| Agent | Skill auto-trigger | Entry point | Install |
+|---|---|---|---|
+| Claude Code | yes | `/tui-design` | plugin (marketplace) |
+| OpenCode | yes | `/tui-design` | skills pack + command file |
+| Codex | yes | `/prompts:tui-design` | skills pack + prompt file |
+| ZCode | yes | `/tui-design` | skills pack + command file |
+| Other Agent Skills tools | if supported | n/a | skills pack |
+
+`just check-compatibility` enforces the split: agent names, harness syntax, and install paths are banned inside the skill pack; the four command files stay thin, portable routers.
+
 ## What's Included
 
 ```
@@ -179,10 +201,24 @@ tui-design-skill/
 │               ├── src/ring.rs               #   bounded buffer w/ drop accounting
 │               ├── src/stream.rs             #   simulated producer
 │               └── src/ui.rs                 #   stats, viewport, banners
+├── evals/                             # Skill evaluation scenarios
+│   ├── README.md                      # How to run and record evals
+│   ├── new-tui-app.md                 # Greenfield TUI generation rubric
+│   ├── cli-to-tui.md                  # Conversion that keeps CI working
+│   ├── rtl-arabic.md                  # Arabic/RTL handling rubric
+│   ├── unicode-width.md               # Display-width alignment rubric
+│   ├── rendering-bug.md               # tmux/SSH/restore troubleshooting
+│   └── framework-selection.md         # Requirement-driven decision rubric
 ├── scripts/
 │   ├── check-mockups.py              # ASCII mockup alignment checker
 │   ├── check-crossrefs.py            # Cross-reference sync checker
-│   └── test_check_crossrefs.py       # Unit tests for check-crossrefs.py
+│   ├── check-evals.py                # Eval scenario skeleton/coverage checker
+│   ├── check-install.py              # Install-docs simulation checker
+│   ├── check-compatibility.py        # Agent-agnostic pack checker
+│   ├── test_check_crossrefs.py       # Unit tests for check-crossrefs.py
+│   ├── test_check_evals.py           # Unit tests for check-evals.py
+│   ├── test_check_install.py         # Unit tests for check-install.py
+│   └── test_check_compatibility.py   # Unit tests for check-compatibility.py
 └── justfile                          # Validation pipeline (just check-all)
 ```
 
@@ -191,12 +227,16 @@ tui-design-skill/
 No build step — the repo is Markdown plus starter templates, validated with [just](https://github.com/casey/just):
 
 ```bash
-just check-all       # markdownlint + mockup widths + cross-refs + template compile checks
-just check-mockups   # ASCII mockup alignment only
-just check-crossrefs # SKILL.md/README/command/manifest sync only
+just check-all            # everything below
+just check-mockups        # ASCII mockup alignment only
+just check-crossrefs      # SKILL.md/README/command/manifest sync only
+just check-evals          # eval scenario skeleton, coverage, reference paths
+just check-install        # simulate documented installs into a temp $HOME
+just check-compatibility  # skill pack stays agent-agnostic
+just test-scripts         # unit tests for the validation scripts
 ```
 
-`check-all` enforces the repo's own quality rules: every ASCII mockup must render at a fixed width (a misaligned mockup is worse than no mockup — see `AGENTS.md`), markdown must lint clean, the Bubble Tea, Ratatui, and Textual templates must compile, and the example projects must compile *and pass their unit tests*. `check-crossrefs` keeps the pack honest about its own structure: every reference, framework, and pattern file must be listed in SKILL.md's Reference Documents and in the README tree, the four per-tool command files must be byte-identical, and the plugin manifests must point at real paths. The validation scripts have unit tests (`just test-scripts`). Each starter also runs directly:
+`check-all` enforces the repo's own quality rules: every ASCII mockup must render at a fixed width (a misaligned mockup is worse than no mockup — see `AGENTS.md`), markdown must lint clean, the Bubble Tea, Ratatui, and Textual templates must compile, and the example projects must compile *and pass their unit tests*. `check-crossrefs` keeps the pack honest about its own structure: every reference, framework, and pattern file must be listed in SKILL.md's Reference Documents and in the README tree, the four per-tool command files must be byte-identical, and the plugin manifests must point at real paths. `check-install` actually runs the documented manual-install commands against a temp `$HOME` and verifies what lands. `check-compatibility` bans agent-specific content inside the skill pack. The validation scripts have unit tests (`just test-scripts`). Each starter also runs directly:
 
 ```bash
 cd skills/tui-design/templates/bubbletea-starter && go run main.go

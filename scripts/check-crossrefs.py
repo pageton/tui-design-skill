@@ -183,13 +183,14 @@ def check_readme(root: Path) -> list[str]:
     required = {
         "SKILL.md",
         "tui-design.md",
-        "check-mockups.py",
-        "check-crossrefs.py",
-        "test_check_crossrefs.py",
         "justfile",
         "plugin.json",
         "marketplace.json",
     }
+    required.update(p.name for p in (root / "scripts").glob("*.py"))
+    required.update(
+        p.name for p in (root / "evals").glob("*.md") if p.name != "README.md"
+    )
     skill_dir = root / "skills" / "tui-design"
     for d in LISTED_DIRS:
         required.update(f.name for f in (skill_dir / d).glob("*.md"))

@@ -33,6 +33,7 @@ SCAN_PATHS = [
     "skills/tui-design/frameworks/*.md",
     "skills/tui-design/patterns/*.md",
     "skills/tui-design/projects/*/README.md",
+    "evals/*.md",
 ]
 
 BOX_CHARS = set("─│┌┐└┘├┤┬┴┼═║╔╗╚╝╠╣╦╩╬+|-=")

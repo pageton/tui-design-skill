@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A Claude Code plugin plus a skills pack for building polished TUIs. Not a buildable software project — it's a collection of Markdown reference documents, command definitions, and starter templates consumed by AI coding tools (Claude Code, Codex, OpenCode, ZCode). Validation is `just check-all` (markdownlint, ASCII mockup widths, cross-reference sync, template compile checks, example project tests) — see `AGENTS.md`.
+A Claude Code plugin plus a skills pack for building polished TUIs. Not a buildable software project — it's a collection of Markdown reference documents, command definitions, and starter templates consumed by AI coding tools (Claude Code, Codex, OpenCode, ZCode). Validation is `just check-all` (markdownlint, ASCII mockup widths, cross-reference sync, eval scenario checks, install-doc simulation, agent-agnostic checks, template compile checks, example project tests) — see `AGENTS.md`.
 
 ## Repository Structure
 
@@ -17,6 +17,8 @@ A Claude Code plugin plus a skills pack for building polished TUIs. Not a builda
 - `skills/tui-design/patterns/` — Screen pattern templates with ASCII layouts: dashboard, data-browser, form-workflow, log-viewer, file-explorer
 - `skills/tui-design/templates/` — Runnable starter apps for each framework (`bubbletea-starter/`, `textual-starter/`, `ratatui-starter/`, `ink-starter/`)
 - `skills/tui-design/projects/` — Complete example apps (dbview-go, log-monitor-rust)
+- `evals/` — Graded scenarios for evaluating skill output quality (not shipped with the pack)
+- `scripts/` — Validation pipeline scripts (mockups, cross-refs, evals, install, compatibility) with unit tests
 - `opencode/commands/`, `codex/commands/`, `zcode/commands/` — slash command files for other tools
 
 ## Editing Guidelines

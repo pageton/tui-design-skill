@@ -11,6 +11,9 @@ Run `just check-all` before committing. Individual recipes:
 - `lint-md` — markdownlint over `skills/tui-design/references skills/tui-design/frameworks skills/tui-design/patterns skills/tui-design/projects skills/tui-design/SKILL.md README.md commands opencode/commands codex/commands zcode/commands`
 - `check-mockups` — `scripts/check-mockups.py` (fixed-width mockup enforcement)
 - `check-crossrefs` — `scripts/check-crossrefs.py` (SKILL.md reference list ↔ pack files ↔ README tree ↔ command files ↔ plugin manifests)
+- `check-evals` — `scripts/check-evals.py` (eval scenario skeleton, category coverage, reference paths)
+- `check-install` — `scripts/check-install.py` (runs the README's documented install commands against a temp `$HOME`; verifies destinations, no duplicates, update docs)
+- `check-compatibility` — `scripts/check-compatibility.py` (skill pack stays agent-agnostic; command files stay portable)
 - `test-scripts` — unit tests for the validation scripts (`python3 -m unittest discover -s scripts -p "test_*.py"`)
 - `check-rust` / `check-go` / `check-python` — starter templates compile/vet/py_compile
 - `check-go-project` / `check-rust-project` — example projects compile and pass tests
@@ -20,6 +23,7 @@ Gotchas an agent will otherwise guess wrong:
 
 - `.markdownlint.json` disables MD013 (line length) and MD040 (code-fence language). Long lines and bare code fences are intentional — do not "fix" them.
 - `check-mockups` scans every `.md` in the checked dirs: all frame lines of a mockup must be equal width and a status bar must match its frame. A misaligned mockup is worse than no mockup.
+- Eval scenarios in `evals/` follow a fixed section skeleton (Category, Prompt, Fixture, Pass Criteria, Fail Signals, References Expected); every canonical category needs coverage. `check-evals` enforces both.
 - Display-width claims in `skills/tui-design/references/unicode-and-text.md` must be verified with a real width library (e.g. `string-width` from `skills/tui-design/templates/ink-starter/node_modules`), never counted by hand.
 
 ## Editing Constraints
@@ -36,6 +40,7 @@ Gotchas an agent will otherwise guess wrong:
   - `skills/tui-design/projects/log-monitor-rust/` — `cargo check && cargo test`
   - Never weaken a test to make the pipeline green — fix the app.
 - **Framework guides share a skeleton:** overview → architecture → project structure → framework sections (styling, keybindings, async, components) → best practices/common mistakes → dependencies. Keep that shape in `skills/tui-design/frameworks/*.md`.
+- **The skill pack is agent-agnostic.** `skills/tui-design/` markdown must never mention agent brands, harness syntax (`$ARGUMENTS`, "Skill tool", slash commands), or install paths — it loads verbatim into every tool. Agent-specific content lives only in the four command files and README install docs; `just check-compatibility` enforces the split. ("cursor" is exempt: it is terminal vocabulary, not the editor.)
 
 ## Architecture
 
@@ -46,6 +51,7 @@ Gotchas an agent will otherwise guess wrong:
 - `opencode/commands/`, `codex/commands/`, `zcode/commands/` — per-tool command files that delegate to the installed skills pack.
 - `skills/tui-design/references/` — self-contained design docs loaded on demand; one concern per file.
 - `skills/tui-design/frameworks/` — one guide per framework. `skills/tui-design/patterns/` — screen-pattern templates. `skills/tui-design/templates/` — runnable starters. `skills/tui-design/projects/` — reference implementations.
+- `evals/` — graded scenarios for evaluating skill output quality (prompts, fixtures, pass criteria). Not shipped with the pack; repo dev infrastructure.
 
 ## Cross-Reference Maintenance (easy to miss)
 
