@@ -198,9 +198,11 @@ tui-design-skill/
 │           └── log-monitor-rust/             # Resilient log streamer (Ratatui)
 │               ├── src/main.rs               #   panic-safe terminal guard + loop
 │               ├── src/app.rs                #   input model (unit-tested)
+│               ├── src/color.rs              #   color tier ladder (unit-tested)
 │               ├── src/ring.rs               #   bounded buffer w/ drop accounting
 │               ├── src/stream.rs             #   simulated producer
 │               └── src/ui.rs                 #   stats, viewport, banners
+├── CHANGELOG.md                       # Release history (semver)
 ├── evals/                             # Skill evaluation scenarios
 │   ├── README.md                      # How to run and record evals
 │   ├── new-tui-app.md                 # Greenfield TUI generation rubric
@@ -244,6 +246,31 @@ cd skills/tui-design/templates/textual-starter   && textual run app.py --dev
 cd skills/tui-design/templates/ratatui-starter   && cargo run
 cd skills/tui-design/templates/ink-starter       && npm install && npm start
 ```
+
+## Skill Quality
+
+The skill is measured, not assumed. `evals/` holds six graded scenarios
+(greenfield TUI, CLI-to-TUI conversion, Arabic/RTL, Unicode width,
+rendering troubleshooting, framework selection); each run executes the
+scenarios with the skill loaded, grades the responses blind against the
+rubrics, and records results in `evals/README.md`.
+
+Verified results (GLM-5.3, blind grading, identical prompts and fixtures):
+
+- **With skill 96.9% rubric score (31.0/32), zero fail signals** (run 3,
+  this release) vs **85.9% baseline without the skill** (run 1) — the
+  delta is the skill's measured contribution.
+- **Cross-model (Codex CLI 0.157.1, gpt-6-luna, same scenarios and
+  rubrics): 81.2%** — the skill's guidance transferred (capability
+  detection, README deliverables, and all-axes comparisons all passed on
+  the second model); the score gap is execution depth (fewer tests,
+  minimal diffs in exec mode), not concept errors.
+- Iterated fixes verified by graders reading the generated code: the
+  256-color tier, cursor-show terminal restore, `TMUX`/`TERM_PROGRAM`
+  detection, README-as-file deliverables, and full-axis framework
+  comparisons all appear in the evaluated output.
+
+Known limitations are recorded alongside the results in `evals/README.md`.
 
 ## Example Projects
 

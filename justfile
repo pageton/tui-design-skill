@@ -3,7 +3,7 @@
 
 # --- Configuration ---
 
-md_dirs := "skills/tui-design/references skills/tui-design/frameworks skills/tui-design/patterns skills/tui-design/projects skills/tui-design/SKILL.md evals README.md commands opencode/commands codex/commands zcode/commands"
+md_dirs := "skills/tui-design/references skills/tui-design/frameworks skills/tui-design/patterns skills/tui-design/projects skills/tui-design/SKILL.md evals README.md CHANGELOG.md commands opencode/commands codex/commands zcode/commands"
 
 # --- Composite targets ---
 
