@@ -8,7 +8,7 @@ md_dirs := "skills/tui-design/references skills/tui-design/frameworks skills/tui
 # --- Composite targets ---
 
 # Run all validation checks
-check-all: lint-md check-mockups check-rust check-go check-python check-go-project check-rust-project
+check-all: lint-md check-mockups check-crossrefs test-scripts check-rust check-go check-python check-go-project check-rust-project
     @echo "All checks passed."
 
 # --- Individual checks ---
@@ -20,6 +20,14 @@ lint-md:
 # Check all ASCII mockups render at fixed width
 check-mockups:
     python3 scripts/check-mockups.py
+
+# Check cross-references: SKILL.md docs list, README tree, command files, manifests
+check-crossrefs:
+    python3 scripts/check-crossrefs.py
+
+# Unit tests for the validation scripts
+test-scripts:
+    python3 -m unittest discover -s scripts -p "test_*.py"
 
 # Check Rust template compiles
 check-rust:

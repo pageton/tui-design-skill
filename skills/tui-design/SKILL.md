@@ -1,6 +1,6 @@
 ---
 name: tui-design
-description: Design, build, redesign, review, and debug terminal user interfaces (TUIs). Use when the user wants to build or improve a TUI, convert a CLI to an interactive terminal app, choose a TUI framework (Bubble Tea, Textual, Ratatui, Ink), design layouts and keybindings, handle Unicode/wide characters/RTL text, ensure terminal compatibility, write TUI tests, or troubleshoot terminal rendering issues.
+description: Design, build, redesign, review, and debug terminal user interfaces (TUIs). Use when the user wants to build, polish, or review a terminal app; mentions "TUI", "terminal UI", "terminal user interface", Bubble Tea, Textual, Ratatui, or Ink; asks to convert a CLI into an interactive TUI; requests TUI layouts, keybindings, or components; needs Unicode, wide-character, emoji, or RTL/Arabic/Hebrew text handling; wants terminal compatibility checks or TUI tests (snapshot, golden, interaction); or needs to troubleshoot terminal rendering.
 ---
 
 # TUI Design Skill
@@ -529,6 +529,20 @@ Never produce TUIs that:
 - Leave focus behavior ambiguous
 - Skip empty/loading/error states
 - Mix rendering logic with business logic
+
+---
+
+## It's Working If
+
+Observable signs this skill is doing its job on a real task:
+
+- New TUI requests get at most one short round of clarification, then a concrete design — never an endless interview.
+- Layouts are shown as fixed-width ASCII mockups that actually align. A misaligned mockup is worse than no mockup.
+- Every generated TUI ships a footer/status bar with key hints, designed empty/loading/error states, and resize handling with a stated minimum size.
+- Framework recommendations name the requirements that decided it, the runner-up, and the limitations that will bite.
+- Code separates domain, state, view, and input handling; rendering never contains business logic.
+- Text handling follows the width rules: display-width math, grapheme-boundary truncation, no manual reversal of RTL text.
+- Tests run headless and pass before the task is called done, and limitations are reported honestly (unsupported terminals, no BiDi) rather than papered over.
 
 ---
 

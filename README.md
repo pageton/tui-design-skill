@@ -180,7 +180,9 @@ tui-design-skill/
 │               ├── src/stream.rs             #   simulated producer
 │               └── src/ui.rs                 #   stats, viewport, banners
 ├── scripts/
-│   └── check-mockups.py              # ASCII mockup alignment checker
+│   ├── check-mockups.py              # ASCII mockup alignment checker
+│   ├── check-crossrefs.py            # Cross-reference sync checker
+│   └── test_check_crossrefs.py       # Unit tests for check-crossrefs.py
 └── justfile                          # Validation pipeline (just check-all)
 ```
 
@@ -189,11 +191,12 @@ tui-design-skill/
 No build step — the repo is Markdown plus starter templates, validated with [just](https://github.com/casey/just):
 
 ```bash
-just check-all      # markdownlint + mockup widths + template compile checks
-just check-mockups  # ASCII mockup alignment only
+just check-all       # markdownlint + mockup widths + cross-refs + template compile checks
+just check-mockups   # ASCII mockup alignment only
+just check-crossrefs # SKILL.md/README/command/manifest sync only
 ```
 
-`check-all` enforces the repo's own quality rules: every ASCII mockup must render at a fixed width (a misaligned mockup is worse than no mockup — see `AGENTS.md`), markdown must lint clean, the Bubble Tea, Ratatui, and Textual templates must compile, and the example projects must compile *and pass their unit tests*. Each starter also runs directly:
+`check-all` enforces the repo's own quality rules: every ASCII mockup must render at a fixed width (a misaligned mockup is worse than no mockup — see `AGENTS.md`), markdown must lint clean, the Bubble Tea, Ratatui, and Textual templates must compile, and the example projects must compile *and pass their unit tests*. `check-crossrefs` keeps the pack honest about its own structure: every reference, framework, and pattern file must be listed in SKILL.md's Reference Documents and in the README tree, the four per-tool command files must be byte-identical, and the plugin manifests must point at real paths. The validation scripts have unit tests (`just test-scripts`). Each starter also runs directly:
 
 ```bash
 cd skills/tui-design/templates/bubbletea-starter && go run main.go

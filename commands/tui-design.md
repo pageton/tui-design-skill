@@ -2,7 +2,7 @@
 description: Design and build polished terminal user interfaces (TUI)
 ---
 
-Use the `tui-design` skill.
+Use the `tui-design` skill from the installed skills pack.
 
-Task: $ARGUMENTS
+Target: $ARGUMENTS
 If no target is provided, ask the user what TUI they want to build, redesign, or review.

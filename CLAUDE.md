@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-A Claude Code plugin plus a skills pack for building polished TUIs. Not a buildable software project — it's a collection of Markdown reference documents, command definitions, and starter templates consumed by AI coding tools (Claude Code, Codex, OpenCode, ZCode). Validation is `just check-all` (markdownlint, ASCII mockup widths, template compile checks, example project tests) — see `AGENTS.md`.
+A Claude Code plugin plus a skills pack for building polished TUIs. Not a buildable software project — it's a collection of Markdown reference documents, command definitions, and starter templates consumed by AI coding tools (Claude Code, Codex, OpenCode, ZCode). Validation is `just check-all` (markdownlint, ASCII mockup widths, cross-reference sync, template compile checks, example project tests) — see `AGENTS.md`.
 
 ## Repository Structure
 

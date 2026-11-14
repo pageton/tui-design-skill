@@ -10,6 +10,8 @@ Run `just check-all` before committing. Individual recipes:
 
 - `lint-md` — markdownlint over `skills/tui-design/references skills/tui-design/frameworks skills/tui-design/patterns skills/tui-design/projects skills/tui-design/SKILL.md README.md commands opencode/commands codex/commands zcode/commands`
 - `check-mockups` — `scripts/check-mockups.py` (fixed-width mockup enforcement)
+- `check-crossrefs` — `scripts/check-crossrefs.py` (SKILL.md reference list ↔ pack files ↔ README tree ↔ command files ↔ plugin manifests)
+- `test-scripts` — unit tests for the validation scripts (`python3 -m unittest discover -s scripts -p "test_*.py"`)
 - `check-rust` / `check-go` / `check-python` — starter templates compile/vet/py_compile
 - `check-go-project` / `check-rust-project` — example projects compile and pass tests
 - `build-rust` / `build-go` / `clean` — build templates, clean artifacts
@@ -52,7 +54,18 @@ The Claude Code plugin loads `skills/tui-design/` directly; OpenCode/Codex/ZCode
 1. `skills/tui-design/SKILL.md` → "Reference Documents" list
 2. `README.md` → "What's Included" tree (and install instructions if paths changed)
 
-When the pack layout changes, keep the four command files (`commands/`, `opencode/commands/`, `codex/commands/`, `zcode/commands/`) in sync.
+`just check-crossrefs` verifies all of this mechanically: every file under `references/`, `frameworks/`, and `patterns/` is listed in SKILL.md's Reference Documents, every path SKILL.md mentions exists, the README tree lists every pack file, the SKILL.md frontmatter description is trigger-phrased ("Use when …") and under 1024 characters, and the plugin/marketplace manifests parse and point at real paths. It runs as part of `just check-all`. The one thing it cannot check is README install instructions when paths change — review those by hand.
+
+When the pack layout changes, keep the four command files (`commands/`, `opencode/commands/`, `codex/commands/`, `zcode/commands/`) byte-identical; the same check enforces it.
+
+## Invocation Convention
+
+The pack has two invocation surfaces with different jobs:
+
+- **Model-invoked: `skills/tui-design/SKILL.md`.** The skill triggers automatically when a task matches. Its frontmatter `description` must lead with trigger phrasing ("Use when …", quoted keywords like "TUI", framework names) so agents can select it without help. All discipline, workflows, and references live here — never in a command file.
+- **User-invoked: the four command files.** `/tui-design` and its per-tool equivalents are thin routers: frontmatter, "Use the `tui-design` skill", `$ARGUMENTS`. They hold no design guidance of their own and must stay byte-identical.
+
+Rule: a user-invoked command may delegate to the model-invoked skill, never the reverse. Any future entry point follows the same wrapper shape.
 
 ## Installation
 

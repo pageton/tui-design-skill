@@ -1,5 +1,5 @@
 ---
-description: Design and build polished terminal user interfaces
+description: Design and build polished terminal user interfaces (TUI)
 ---
 
 Use the `tui-design` skill from the installed skills pack.
