@@ -8,6 +8,7 @@
 //! Run: cargo run
 
 mod app;
+mod color;
 mod ring;
 mod stream;
 mod ui;
@@ -73,10 +74,15 @@ fn init_terminal() -> io::Result<Tui> {
 }
 
 fn restore_terminal() -> io::Result<()> {
+    // Ordered checklist from stability-and-robustness.md §3: disable what
+    // was enabled (mouse), leave the alt screen, show the cursor (draw()
+    // hides it every frame), then disable raw mode. Idempotent — the panic
+    // hook and the normal exit both call this.
     crossterm::execute!(
         io::stdout(),
         crossterm::event::DisableMouseCapture,
-        crossterm::terminal::LeaveAlternateScreen
+        crossterm::terminal::LeaveAlternateScreen,
+        crossterm::cursor::Show
     )?;
     crossterm::terminal::disable_raw_mode()?;
     Ok(())

@@ -87,8 +87,14 @@ fn main() -> Result<(), io::Error> {
         }
     }
 
-    // Restore terminal
-    crossterm::execute!(io::stdout(), crossterm::terminal::LeaveAlternateScreen)?;
+    // Restore terminal — full checklist, in order. draw() hides the cursor
+    // every frame, so restore must Show it back (or the cursor stays
+    // invisible after exit).
+    crossterm::execute!(
+        io::stdout(),
+        crossterm::terminal::LeaveAlternateScreen,
+        crossterm::cursor::Show
+    )?;
     crossterm::terminal::disable_raw_mode()?;
     Ok(())
 }
@@ -445,7 +451,7 @@ impl Action {
 
 ## Best Practices
 
-1. **Always restore terminal state** — Use `EnterAlternateScreen`/`LeaveAlternateScreen` and `enable_raw_mode`/`disable_raw_mode` in a `Drop` guard
+1. **Always restore terminal state** — In a `Drop` guard plus a panic hook (idempotent — both may run): leave the alternate screen, `Show` the cursor (`draw()` hides it every frame), `disable_raw_mode`, disable mouse/paste if enabled. See `references/stability-and-robustness.md` §3 for the ordered checklist
 2. **Use `Layout` and constraints** — `Constraint::Min(0)` for flexible areas, `Constraint::Length(n)` for fixed
 3. **Keep draw functions pure** — They should only read state and produce output
 4. **Use `Block` for padding and borders** — Don't add spaces manually

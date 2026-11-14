@@ -65,8 +65,18 @@ cursor). The exit path must be bulletproof:
 
 - **Restore terminal state in all paths** — normal exit, error exit, and
   panic. Most frameworks do this in `Run()`'s defer; if you manage the
-  terminal yourself (Ratatui), wrap the whole loop:
+  terminal yourself (Ratatui), wrap the loop:
   `let res = run_app(&mut terminal, app); terminal::restore(); res?;`
+- **Restore is a checklist, not one call.** A partial restore trades one
+  broken shell for another. Restore everything the app touched, in order:
+  1. leave the alternate screen (`\x1b[?1049l`)
+  2. show the cursor (`\x1b[?25h`) — draw loops hide it every frame, so a
+     restore that skips this leaves the cursor invisible after exit
+  3. disable raw mode (echo back on)
+  4. disable mouse reporting and bracketed paste if they were enabled
+  5. flush, *then* print errors/panic messages
+  Make the routine idempotent: the panic hook and the normal-exit defer
+  both call it, and a double restore must be harmless.
 - **Install a panic hook** that restores the terminal *before* the default
   panic printer, so the panic message lands in a usable shell. In Go:
   `defer func() { if r := recover(); r != nil { fmt.Print("\x1b[?1049l"); panic(r) } }()`
@@ -163,6 +173,7 @@ Stability is testable. Before calling a TUI production-ready:
 - [ ] Hold a navigation key for 5s — no freeze, no unbounded memory
 - [ ] Paste 100KB into every input — no crash, visible truncation
 - [ ] `ctrl+c` during a modal — app exits, terminal restored
+- [ ] Force a panic mid-render — shell usable afterwards: echo on, cursor visible, no alt-screen residue
 - [ ] Trigger the error path (bad file/bad query) — old state intact
 - [ ] Run under a 16-color terminal — palette degrades, no unreadable pairs
 - [ ] Kill the process mid-write — config/history files uncorrupted

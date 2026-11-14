@@ -79,9 +79,55 @@ Rules:
 - **Feature-detect at startup once**, store a `Capabilities` struct, and
   pass it to rendering. Don't re-detect per frame.
 
-Useful environment variables: `TERM`, `COLORTERM`, `TERM_PROGRAM`,
-`VTE_VERSION`, `WT_SESSION`, `KITTY_WINDOW_ID`, `GHOSTTY_RESOURCES_DIR`,
-`TMUX`, `ZELLIJ`, `SSH_TTY`, `NO_COLOR`, `CLICOLOR(_FORCE)`.
+### Environment variables — what each one proves
+
+| Variable | Meaning / action |
+|---|---|
+| `TERM` | Terminal type. Contains `256color` ⇒ 256-color tier; starts with `screen`/`tmux` ⇒ inside a multiplexer; `dumb` ⇒ mono |
+| `COLORTERM` | `truecolor`/`24bit` ⇒ 24-bit color. Inside tmux trust it only if it survived the hop (tmux ≥ 3.2 forwards it for capable outer terminals) |
+| `TERM_PROGRAM` | Identifies the actual emulator when `TERM` is generic or wrapped: `tmux`, `iTerm.app`, `Apple_Terminal`, `vscode`, `ghostty` |
+| `TMUX` / `ZELLIJ` | Set ⇒ inside that multiplexer; capabilities belong to the *outer* emulator, gated by its passthrough settings |
+| `WT_SESSION` | Windows Terminal |
+| `KITTY_WINDOW_ID` / `GHOSTTY_RESOURCES_DIR` | kitty / Ghostty |
+| `VTE_VERSION` | VTE-based emulator (GNOME Terminal and friends) |
+| `SSH_TTY` | Remote session — the remote terminfo entry may be missing; keep fallbacks |
+| `NO_COLOR` | User policy: no color at all (bold/reverse emphasis still fine) |
+| `CLICOLOR` / `CLICOLOR_FORCE` | BSD-style color opt-out / opt-in |
+
+### Color tier ladder
+
+Pick the palette tier once at startup and never emit above it. The middle
+tier is the one implementations skip and users notice. Consult `TMUX` and
+`TERM_PROGRAM` directly — do not infer the multiplexer from `TERM` alone
+(users override `TERM`):
+
+```text
+0. inside a multiplexer?  TMUX set, or TERM_PROGRAM = tmux (ZELLIJ likewise)
+1. NO_COLOR set                                         → mono (bold/reverse emphasis)
+2. COLORTERM ∈ {truecolor, 24bit}, or TERM ends -direct → truecolor (24-bit)
+   inside tmux: only a forwarded COLORTERM grants truecolor — a bare
+   tmux*/screen* TERM never implies 24-bit, and -direct is not passed
+   through by older tmux
+3. TERM contains "256color"                             → 256 colors
+4. anything else                                        → 16 ANSI colors
+```
+
+Notes:
+
+- Under tmux, `TERM` is `tmux*`/`screen*`. Truecolor reaches the screen
+  only when tmux's `Tc`/`RGB` capability is enabled for the outer terminal
+  — automatic on tmux ≥ 3.2 for known-capable emulators, otherwise
+  `set -as terminal-overrides ',*:Tc'`. If `COLORTERM` did not survive the
+  hop, drop to tier 3.
+- `TERM_PROGRAM` values worth branching on: `tmux` (multiplexer), and
+  emulator identities (`iTerm.app`, `vscode`, `ghostty`) when `TERM` is
+  generic — e.g. to log which emulator the user is actually on or to
+  enable emulator-specific extras.
+- Frameworks differ: Lip Gloss (termenv), Textual (rich), and Ink (chalk)
+  auto-downgrade colors to the detected profile; **Ratatui does not** —
+  pick `Color::Rgb` vs `Color::Indexed(n)` yourself from the tier.
+- Define the palette once per tier (or map truecolor → 256 cube → 16 ANSI
+  names) instead of scattering raw color values through view code.
 
 ---
 

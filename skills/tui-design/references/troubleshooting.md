@@ -114,9 +114,13 @@ screen is wrong, it is the emulator/font.
 
 - **Cause**: exit path skipped restore — panic, `os.Exit`, `process.exit`,
   or an unhandled signal (SIGTERM, SIGHUP) bypassing cleanup.
+- **Symptom variants**: no echo (raw mode left on), leftover frame or
+  artifacts (alternate screen left on), invisible cursor after exit
+  (restore skipped `\e[?25h` — draw loops hide the cursor every frame).
+  All the same root cause.
 - **Fix**: restore in a guard/defer that runs on *all* paths including
-  panic (see `stability-and-robustness.md` §3), and install signal
-  handlers that run the same restore.
+  panic (see `stability-and-robustness.md` §3 for the full ordered
+  checklist), and install signal handlers that run the same restore.
 - **Recovery for the user**: `reset`, or `stty sane && printf '\e[?1049l'`.
 
 ### tmux / zellij incompatibility

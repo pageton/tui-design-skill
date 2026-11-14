@@ -121,5 +121,11 @@ When you select a framework for the user, state:
 2. The runner-up and why it lost.
 3. Known limitations of the choice that will hit *this* project
    (e.g. "no BiDi", "Python runtime required", "no built-in mouse").
+4. A comparison of **every serious candidate on every axis that matters to
+   this project** — at minimum: rendering model under the project's update
+   frequency, terminal/tmux compatibility, Unicode width handling, BiDi,
+   and testability. Stating an axis for the winner only is an incomplete
+   comparison; the runner-up column is where the recommendation earns
+   credibility.
 
 This forces a decision grounded in requirements rather than familiarity.

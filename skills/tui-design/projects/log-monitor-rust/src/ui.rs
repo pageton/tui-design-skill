@@ -1,6 +1,7 @@
 //! Rendering: stats header, log viewport, filter bar, banners, status bar.
 
 use crate::app::App;
+use crate::color::{tier, ColorTier};
 use crate::ring::Level;
 use ratatui::prelude::*;
 use ratatui::widgets::{Block, Borders, Padding, Paragraph};
@@ -125,10 +126,19 @@ fn draw_disconnect(f: &mut Frame, area: Rect, theme: &Theme) {
         " ● producer disconnected (simulated) — previous logs kept — R: retry",
         theme.error,
     ));
-    f.render_widget(
-        Paragraph::new(line).style(Style::default().bg(Color::Rgb(60, 20, 20))),
-        area,
-    );
+    f.render_widget(Paragraph::new(line).style(error_banner_bg(tier())), area);
+}
+
+/// Never emit above the detected tier (terminal-compatibility.md §3):
+/// truecolor → dark maroon RGB, 256 → Indexed(52) maroon, 16 → black,
+/// mono → no background at all.
+fn error_banner_bg(tier: ColorTier) -> Style {
+    match tier {
+        ColorTier::TrueColor => Style::default().bg(Color::Rgb(60, 20, 20)),
+        ColorTier::Color256 => Style::default().bg(Color::Indexed(52)),
+        ColorTier::Ansi16 => Style::default().bg(Color::Black),
+        ColorTier::Mono => Style::default(),
+    }
 }
 
 fn draw_separator(f: &mut Frame, area: Rect, theme: &Theme) {

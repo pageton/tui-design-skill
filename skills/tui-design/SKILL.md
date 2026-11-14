@@ -226,8 +226,9 @@ the terminal emulator (`references/rtl-and-bidi.md`).
 ## Terminal Compatibility
 
 - Assume nothing: feature-detect at startup (`TERM`, `COLORTERM`,
-  `TERM_PROGRAM`, `TMUX`…) and degrade gracefully: truecolor → 256 → 16 →
-  mono.
+  `TERM_PROGRAM`, `TMUX`…) and degrade gracefully through *every* tier:
+  truecolor → 256 (when `TERM` contains `256color`) → 16 → mono. Inside
+  tmux, trust truecolor only when `COLORTERM` survived the hop.
 - Never hard-fail on a missing optional feature. Only hard requirements:
   TTY, UTF-8, minimum grid.
 - Mouse, bracketed paste, alt screen, hyperlinks, clipboard, kitty
@@ -346,9 +347,13 @@ Testing is a first-class requirement:
 ## Error Handling and Terminal Restore
 
 - The terminal must be restored on **every** exit path: normal exit,
-  error, panic, Ctrl+C, SIGTERM. Restore in a defer/guard/panic hook.
-- Never leave the terminal in raw mode, alternate screen, hidden cursor,
-  or mouse-reporting mode. (`reset`/`stty sane` recovers a broken shell.)
+  error, panic, Ctrl+C, SIGTERM. Restore in a defer/guard/panic hook, and
+  make it idempotent (both paths may run).
+- Restoration is an ordered checklist, not one call: leave alt screen →
+  show the cursor (draw loops hide it every frame) → disable raw mode →
+  disable mouse/paste modes → flush, then print errors. Never leave the
+  terminal in raw mode, alternate screen, hidden cursor, or
+  mouse-reporting mode. (`reset`/`stty sane` recovers a broken shell.)
 - Errors are states, not crashes: designed error views with a next action.
 - Fail closed before entering fullscreen when required resources are
   missing.
@@ -380,7 +385,8 @@ Rules:
 
 ## Documentation
 
-The skill should produce a README (or equivalent) for each TUI containing:
+Every TUI ships a `README.md` file in the project root — written to disk,
+not only embedded in your reply. It contains:
 
 ```text
 Requirements · Installation · Quick Start · Configuration ·
@@ -430,6 +436,8 @@ already provides the functionality.
    - Key binding configuration
 6. Include empty states, loading states, and error handling from the start.
 7. Add a status bar or footer showing key hints.
+8. Write the project `README.md` as an actual file (see Documentation) —
+   documentation embedded only in your reply doesn't count.
 
 ### Workflow 2: Convert CLI to TUI
 
@@ -439,6 +447,8 @@ already provides the functionality.
 4. Replace sequential prompts with interactive forms/lists.
 5. Add real-time feedback and progress indicators.
 6. Preserve all original functionality — the TUI is a superset, not a subset.
+7. Write/update the project `README.md` documenting the CLI/TUI boundary:
+   what triggers the TUI, what stays script-friendly, exit codes.
 
 ### Workflow 3: Redesign an Existing TUI
 
@@ -471,7 +481,11 @@ already provides the functionality.
 Follow the decision rules in the Framework Selection section above, then
 load `references/framework-selection.md` for the full trade-off matrix.
 Record: the chosen framework, the 2-3 requirements that decided it, the
-runner-up, and the limitations that will hit this project.
+runner-up, and the limitations that will hit this project. Compare every
+serious candidate on every axis that matters — at minimum rendering model
+at the project's update frequency, terminal/tmux compatibility, Unicode
+width, BiDi, and testability; a winner-only comparison is incomplete
+(`references/framework-selection.md` §4).
 
 ---
 
@@ -483,6 +497,7 @@ runner-up, and the limitations that will hit this project.
 - Separate into logical files when complexity justifies it.
 - Include sensible defaults.
 - Comment only where logic isn't self-evident.
+- Documentation ships as files (`README.md`), not only as prose in the reply.
 - No hacks, no shortcuts that compromise architecture.
 
 ### Visual Mockups
