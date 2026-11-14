@@ -67,5 +67,87 @@ reference updates.
 | 2026-11-14 | GLM-5.3 + skill | framework-selection | 4.5/5 (90%) | decisive, runner-up + limitations, BiDi note, terminal contract |
 | 2026-11-14 | GLM-5.3 baseline | framework-selection | 3/5 (60%), strict fail | no BiDi mention, no terminal contract, no winner limitations |
 
+Run 2 (2026-11-14, same model, blind grading, after the terminal-compatibility
+fixes — color tier ladder, ordered restore checklist with cursor-show,
+`TERM_PROGRAM`/`TMUX` semantics in `terminal-compatibility.md`, Ratatui guide
+and `log-monitor-rust` example synced): **93.8% (30.0/32), zero fail
+signals, zero fail verdicts**. Of the three run-1 rendering-troubleshooting
+gaps: 256-color tier — **fixed** (grader verified a truecolor → `Indexed` →
+ANSI → mono ladder with no hardcoded truecolor); cursor restore — **fixed**
+(idempotent ordered checklist incl. `Show` on panic/error/normal paths);
+`TERM_PROGRAM`/`TMUX` — **partially fixed** (color tier detection now works
+via `TERM`, but the two vars are still not consulted directly). The
+remaining partials (no README file in cli-to-tui, one-sided
+unicode/testability axes in framework-selection) sit on criteria the
+reference changes did not touch — single-run variance, not regressions.
+
+| Date | Agent | Scenario | Result | Notes |
+|---|---|---|---|---|
+| 2026-11-14 | GLM-5.3 + skill (run 2) | new-tui-app | 7/7 (100%), strict pass | 50 tests incl. fixed-dimension frames; minor overclaim noted (PTY smoke test) |
+| 2026-11-14 | GLM-5.3 + skill (run 2) | cli-to-tui | 4.5/5 (90%) | boundary documented in response + module docstring, but no README file this run |
+| 2026-11-14 | GLM-5.3 + skill (run 2) | rtl-arabic | 5/5 (100%), strict pass | 22 tests green; BiDi rationale and emulator list complete |
+| 2026-11-14 | GLM-5.3 + skill (run 2) | unicode-width | 5/5 (100%), strict pass | whole-file width math; deps pinned to ratatui's existing tree |
+| 2026-11-14 | GLM-5.3 + skill (run 2) | rendering-bug | 4.5/5 (90%) | 256-tier + cursor restore fixed; partial: `TMUX`/`TERM_PROGRAM` still unconsulted |
+| 2026-11-14 | GLM-5.3 + skill (run 2) | framework-selection | 4/5 (80%) | decisive + runner-up + limitations; partials: unicode/testability axes one-sided, BiDi framed as a Ratatui-only cost |
+
+Run 3 (2026-11-14, same model, blind grading, after fixing the three run-2
+gaps — direct `TMUX`/`TERM_PROGRAM` consultation, README-as-file
+deliverable, all-axes framework comparison): **96.9% (31.0/32), zero fail
+signals, zero fail verdicts**. All three gaps verified fixed by graders
+reading the generated code: rendering-bug capability detection now reads
+`NO_COLOR`/`COLORTERM`/`TERM`/`TMUX`/`TERM_PROGRAM` with a truecolor → 256
+→ 16 → mono ladder; cli-to-tui shipped a real `README.md` documenting the
+CLI/TUI boundary (as did new-tui-app and rendering-bug); framework
+selection compared every candidate on rendering, terminal/tmux, Unicode,
+and testability. New, smaller residuals this run: rendering-bug restores
+on panic and normal exit but lacks an RAII guard for `?`-propagated errors
+and traps no signals; framework selection states no explicit minimum
+terminal contract.
+
+| Date | Agent | Scenario | Result | Notes |
+|---|---|---|---|---|
+| 2026-11-14 | GLM-5.3 + skill (run 3) | new-tui-app | 7/7 (100%), strict pass | 40 tests, exact-width mockups verified programmatically |
+| 2026-11-14 | GLM-5.3 + skill (run 3) | cli-to-tui | 5/5 (100%), strict pass | README.md on disk; CI contract byte-pinned (41+11 tests) |
+| 2026-11-14 | GLM-5.3 + skill (run 3) | rtl-arabic | 5/5 (100%), strict pass | reversal gone; grapheme-snapped highlighting; 12 tests |
+| 2026-11-14 | GLM-5.3 + skill (run 3) | unicode-width | 5/5 (100%), strict pass | whole-file width math; 9 tests; deps = ratatui's tree |
+| 2026-11-14 | GLM-5.3 + skill (run 3) | rendering-bug | 4.5/5 (90%) | partial: no RAII guard for `?` error paths; SIGTERM untrapped |
+| 2026-11-14 | GLM-5.3 + skill (run 3) | framework-selection | 4.5/5 (90%) | partial: no explicit minimum terminal contract stated |
+
+Run 4 — cross-model (2026-11-14): the same six scenarios, prompts, fixtures,
+and rubrics run through **Codex CLI 0.157.1 (model `gpt-6-luna`)** with the
+skill supplied at the same path. Graders were blind to the arm and weighed
+the project files as primary evidence (Codex exec mode writes terse
+summaries and edits code in place). Result: **81.2% (26.0/32), 3 fail
+signals, 3 fail verdicts — all in the tests/completeness class** (no tests
+shipped in new-tui-app/unicode-width/rtl-arabic, no truncation in
+unicode-width, a frameless misaligned mockup in new-tui-app).
+
+The important signal for the skill: **every fix from this session
+transferred to the second model.** Codex's capability detection "consults
+TMUX/TERM_PROGRAM and distrusts TERM alone" with the full color-tier
+ladder (rendering-bug criterion 2 pass); it shipped a README.md documenting
+the CLI/TUI boundary (cli-to-tui 5/5); and its framework memo compared all
+candidates on rendering, SSH/tmux, Unicode/BiDi, and testability with a
+stated minimum terminal contract (framework-selection 5/5). Concept-level
+fail signals stayed at zero — no text reversal, no BiDi overclaims, no
+duplicate width libraries.
+
+| Date | Agent | Scenario | Result | Notes |
+|---|---|---|---|---|
+| 2026-11-14 | gpt-6-luna + skill (Codex CLI) | new-tui-app | 5.5/7 (79%) | fail: no tests (admitted); mockup frameless with 1-col misalignments |
+| 2026-11-14 | gpt-6-luna + skill (Codex CLI) | cli-to-tui | 5/5 (100%), strict pass | README.md on disk; TUI opt-in; piped behavior verified |
+| 2026-11-14 | gpt-6-luna + skill (Codex CLI) | rtl-arabic | 3.5/5 (70%) | reversal gone, logical order kept; no tests, no right-alignment wiring |
+| 2026-11-14 | gpt-6-luna + skill (Codex CLI) | unicode-width | 2.5/5 (50%) | width crate used, but per-char not clusters; no truncation, no tests |
+| 2026-11-14 | gpt-6-luna + skill (Codex CLI) | rendering-bug | 4.5/5 (90%) | TMUX/TERM_PROGRAM ladder present; bounded batches, 50ms resize debounce |
+| 2026-11-14 | gpt-6-luna + skill (Codex CLI) | framework-selection | 5/5 (100%), strict pass | all four axes + runner-up + limits + minimum terminal contract |
+
+Remaining known limitations (runs 3-4): error-path terminal restore and
+signal trapping in generated code; minimum-terminal-contract statements in
+selection memos; completion-class rubric items (tests, README files) depend
+on the model's execution depth — Codex in exec mode ships minimal diffs, so
+tests and truncation were skipped there; single-run arms carry roughly
+±0.5 criterion of noise, so treat sub-point deltas as variance unless the
+verdict changes.
+
 Run artifacts (responses, verdict JSON) live outside the repo in scratch
 directories; re-run by following "Running an eval" above.
