@@ -82,6 +82,36 @@ class SimulationTests(InstallTestCase):
         self.rewrite_readme("{SKILL.md,references}", "{SKILL.md,missing}")
         self.assertTrue(any("missing" in p for p in ci.check_install(self.root)))
 
+    def test_cli_only_readme_ok(self) -> None:
+        # A README that documents no manual copy commands (skills CLI is
+        # the only documented install) must pass without simulation.
+        readme = self.root / "README.md"
+        readme.write_text(
+            "\n".join(
+                [
+                    "# TUI Design Skill",
+                    "",
+                    "## Install",
+                    "",
+                    "Plugin or pack, not both.",
+                    "",
+                    "```bash",
+                    "npx skills add pageton/tui-design-skill",
+                    "```",
+                    "",
+                    "## Updating",
+                    "",
+                    "```bash",
+                    "npx skills update",
+                    "```",
+                    "",
+                    "Marketplace plugins update via /plugin.",
+                    "",
+                ]
+            )
+        )
+        self.assertEqual(ci.check_install(self.root), [])
+
     def test_skills_never_installed(self) -> None:
         self.rewrite_readme(
             "cp -r ~/Projects/tui-design-skill/skills/tui-design/"

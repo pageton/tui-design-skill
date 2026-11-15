@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- README: dropped the per-agent manual install blocks — the skills CLI
+  (`npx skills add`) is the only documented pack install; the optional
+  slash-command routers are noted inline, and Updating tells legacy
+  manual installs to migrate to the CLI.
+- `check-install` skips its install simulation when the README documents
+  no manual copy commands (CLI-only install docs); unit-tested.
+
 ## [0.2.1] — 2026-11-15
 
 ### Changed

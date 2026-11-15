@@ -73,7 +73,7 @@ claude --plugin-dir ~/Projects/tui-design-skill
 The pack works with any tool that follows the [Agent Skills
 specification](https://agentskills.io). Install it from
 [skills.sh](https://skills.sh) — the open agent-skills directory — with
-the `skills` CLI (recommended), or copy files manually per tool.
+the `skills` CLI.
 
 #### Via skills.sh (recommended)
 
@@ -105,50 +105,17 @@ If a flag or command is rejected (`unknown command` / `unknown option`),
 npx resolved a stale cached CLI — pin the latest with
 `npx skills@latest add pageton/tui-design-skill`.
 
-To use the slash-command entry point (optional — the skill also activates
-automatically), copy the command file as shown below.
-
-#### Manual install per agent
-
-Clone or download the repo first:
-
-```bash
-git clone https://github.com/pageton/tui-design-skill ~/Projects/tui-design-skill
-```
-
-Then install the pack (skill) and the slash command for each tool:
-
-```bash
-# OpenCode
-mkdir -p ~/.config/opencode/skills/tui-design
-cp -r ~/Projects/tui-design-skill/skills/tui-design/{SKILL.md,references,frameworks,patterns,templates,projects} \
-    ~/.config/opencode/skills/tui-design/
-mkdir -p ~/.config/opencode/commands
-cp ~/Projects/tui-design-skill/opencode/commands/tui-design.md ~/.config/opencode/commands/tui-design.md
-# Invoke: /tui-design Build me a dashboard for monitoring server health
-
-# Codex
-mkdir -p ~/.codex/skills/tui-design
-cp -r ~/Projects/tui-design-skill/skills/tui-design/{SKILL.md,references,frameworks,patterns,templates,projects} \
-    ~/.codex/skills/tui-design/
-mkdir -p ~/.codex/prompts
-cp ~/Projects/tui-design-skill/codex/commands/tui-design.md ~/.codex/prompts/tui-design.md
-# Invoke: /prompts:tui-design Build me a dashboard for monitoring server health
-
-# ZCode
-mkdir -p ~/.zcode/skills/tui-design
-cp -r ~/Projects/tui-design-skill/skills/tui-design/{SKILL.md,references,frameworks,patterns,templates,projects} \
-    ~/.zcode/skills/tui-design/
-mkdir -p ~/.zcode/commands
-cp ~/Projects/tui-design-skill/zcode/commands/tui-design.md ~/.zcode/commands/tui-design.md
-# Invoke: /tui-design Build me a dashboard for monitoring server health
-```
+The skill activates automatically in every installed agent — no slash
+command needed. If you want an explicit entry point anyway, thin router
+commands ship in the repo under `opencode/commands/`, `codex/commands/`,
+and `zcode/commands/`; copy the one for your tool into its command
+directory. The Claude Code plugin includes its router already.
 
 ## Updating
 
 - **Claude Code plugin:** marketplace plugins keep themselves current; use `/plugin` to check or manage the installed version.
 - **Skills CLI installs:** `npx skills update` — symlinked packs pick up the latest version for every detected agent.
-- **Manual copies:** re-run the copy commands from the install section above; they overwrite in place.
+- **Manual copies (legacy):** delete the copied `tui-design/` directory and reinstall with `npx skills add pageton/tui-design-skill`.
 
 ## Agent Compatibility
 
@@ -157,9 +124,9 @@ The skill files (`SKILL.md`, `references/`, `frameworks/`, `patterns/`) are plai
 | Agent | Skill auto-trigger | Entry point | Install |
 |---|---|---|---|
 | Claude Code | yes | `/tui-design` | plugin (marketplace) |
-| OpenCode | yes | `/tui-design` | skills pack + command file |
-| Codex | yes | `/prompts:tui-design` | skills pack + prompt file |
-| ZCode | yes | `/tui-design` | skills pack + command file |
+| OpenCode | yes | `/tui-design` | skills pack (skills CLI) |
+| Codex | yes | `/prompts:tui-design` | skills pack (skills CLI) |
+| ZCode | yes | `/tui-design` | skills pack (skills CLI) |
 | Other Agent Skills tools | if supported | n/a | skills pack |
 
 `just check-compatibility` enforces the split: agent names, harness syntax, and install paths are banned inside the skill pack; the four command files stay thin, portable routers.

@@ -9,7 +9,9 @@ Two layers:
    that symlinks ~/Projects/tui-design-skill to this repo. Then verify
    what landed: every cp source existed, every destination matches the
    repo bytes, each tool got exactly one skills/tui-design directory
-   with one SKILL.md, and nothing is nested or duplicated.
+   with one SKILL.md, and nothing is nested or duplicated. A README
+   that documents no manual copy commands (CLI-only install docs)
+   skips the simulation entirely.
 
 2. Doc contracts — the install docs must warn against installing the
    plugin AND the skills pack for the same agent ("not both"), and an
@@ -117,6 +119,10 @@ def walk(path: Path) -> list[Path]:
 def simulate_install(readme_text: str, repo: Path, home: Path) -> list[str]:
     problems: list[str] = []
     commands = runnable_commands(readme_text)
+    if not commands:
+        # README documents no manual copy commands (skills CLI is the
+        # documented install) — nothing to simulate.
+        return problems
     cps: list[str] = []
 
     env = dict(os.environ, HOME=str(home))
