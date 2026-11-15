@@ -1,5 +1,9 @@
 # TUI Design Skill
 
+[![skills.sh](https://skills.sh/b/pageton/tui-design-skill)](https://skills.sh/pageton/tui-design-skill)
+[![Release](https://img.shields.io/github/v/release/pageton/tui-design-skill)](https://github.com/pageton/tui-design-skill/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A production-grade AI skill for designing and building exceptionally polished terminal user interfaces. Works as an expert terminal product designer and senior TUI engineer — opinionated about good design, strong on architecture, and focused on making terminal apps feel modern and delightful.
 
 ## What It Does
@@ -10,6 +14,21 @@ A production-grade AI skill for designing and building exceptionally polished te
 - **Review** TUI code with a scored UX assessment
 - **Recommend** frameworks, patterns, and components
 - **Handle** Unicode/RTL text, terminal compatibility, and testing correctly
+
+The pack uses progressive disclosure: `SKILL.md` carries the workflow and standards, and the references, framework guides, screen patterns, runnable starters, and example apps behind them load on demand — the agent never needs all of that context at once.
+
+## When It Triggers
+
+Once installed, the skill activates on its own — no slash command required — when a conversation touches:
+
+- **Building** a TUI ("build me a log viewer", "create a server-health dashboard")
+- **Converting** a CLI tool into an interactive terminal app
+- **Redesigning or reviewing** an existing TUI's design, UX, or code
+- **Choosing** a framework ("Bubble Tea or Ratatui for a kanban app?")
+- **Text rendering** — Unicode, wide characters, emoji, RTL/Arabic/Hebrew, alignment bugs
+- **Terminal reality** — tmux/SSH, color support, mouse, resize, snapshot and interaction tests
+
+It stays out of web UI, native GUI, and backend work that involves no terminal interface.
 
 ## Install
 
@@ -48,25 +67,40 @@ claude --plugin-dir ~/Projects/tui-design-skill
 ### Other agents (OpenCode, Codex, ZCode, …)
 
 The pack works with any tool that follows the [Agent Skills
-specification](https://agentskills.io). Install it with the skills CLI
-(recommended) or copy files manually per tool.
+specification](https://agentskills.io). Install it from
+[skills.sh](https://skills.sh) — the open agent-skills directory — with
+the `skills` CLI (recommended), or copy files manually per tool.
 
-#### Via the skills CLI (recommended)
+#### Via skills.sh (recommended)
+
+Listed on skills.sh at
+[pageton/tui-design-skill](https://skills.sh/pageton/tui-design-skill).
+One command auto-detects your installed agents (OpenCode, Codex, ZCode,
+Cursor, …) and installs for all of them:
 
 ```bash
-# One command — auto-detects your installed agents (OpenCode, Codex,
-# ZCode, Cursor, …) and installs for all of them
 npx skills add pageton/tui-design-skill
+```
 
+The CLI (`vercel-labs/skills`) symlinks the pack into each agent's skills
+directory, so one update flows to every agent at once:
+
+```bash
 # Global install (available in all projects) for specific agents
 npx skills add pageton/tui-design-skill -g -a opencode -a codex -a zcode
 
 # Non-interactive (CI friendly)
 npx skills add pageton/tui-design-skill -g -y
+
+# See what is installed; pull the latest version for every detected agent
+npx skills list
+npx skills update
 ```
 
-The CLI (`vercel-labs/skills`) symlinks the pack into each agent's skills
-directory, so `npx skills update` keeps every agent on the latest version.
+If a flag or command is rejected (`unknown command` / `unknown option`),
+npx resolved a stale cached CLI — pin the latest with
+`npx skills@latest add pageton/tui-design-skill`.
+
 To use the slash-command entry point (optional — the skill also activates
 automatically), copy the command file as shown below.
 
@@ -287,15 +321,30 @@ Both ship unit tests that verify the stability contract without a TTY
 
 ## Example Prompts
 
+**Build:**
+
 - `Build me a beautiful TUI for browsing database records`
 - `Build a dbview-style database explorer with sorting, filtering, and query history`
-- `Turn this CLI deployment tool into a polished interactive TUI`
-- `Redesign this Bubble Tea app so it feels premium`
 - `Create a dashboard-style terminal UI with panels and keyboard navigation`
-- `Review my Textual app and make the UX much better`
 - `Generate a clean multi-pane log viewer TUI`
 - `Design a gorgeous terminal file explorer`
+
+**Convert:**
+
+- `Turn this CLI deployment tool into a polished interactive TUI`
+
+**Redesign:**
+
+- `Redesign this Bubble Tea app so it feels premium`
 - `Make this admin TUI less ugly and more modern`
+
+**Review:**
+
+- `Review my Textual app and make the UX much better`
+
+**Decide:**
+
+- `Bubble Tea, Textual, Ratatui, or Ink for a real-time log dashboard — and why?`
 
 ## Design Philosophy
 

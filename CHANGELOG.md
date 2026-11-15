@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- README: skills.sh integration — install-count badge (plus release and
+  license badges), install docs that route through skills.sh with
+  `npx skills list` / `npx skills update` variants and a stale-npx-cache
+  tip, a "When It Triggers" section, and example prompts grouped by task
+  (build / convert / redesign / review / decide).
+
 ## [0.2.0] — 2026-11-14
 
 ### Added
