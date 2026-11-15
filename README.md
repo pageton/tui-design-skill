@@ -1,8 +1,12 @@
+<div align="center">
+
 # TUI Design Skill
 
 [![skills.sh](https://skills.sh/b/pageton/tui-design-skill)](https://skills.sh/pageton/tui-design-skill)
 [![Release](https://img.shields.io/github/v/release/pageton/tui-design-skill)](https://github.com/pageton/tui-design-skill/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+</div>
 
 A production-grade AI skill for designing and building exceptionally polished terminal user interfaces. Works as an expert terminal product designer and senior TUI engineer — opinionated about good design, strong on architecture, and focused on making terminal apps feel modern and delightful.
 
